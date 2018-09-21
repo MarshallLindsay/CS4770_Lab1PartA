@@ -6,7 +6,7 @@ Class Code: CS4770
 Project Name: Lab1PartA
 
 */
-#include "neuralNetwork.h"
+#include "neurons.h"
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
