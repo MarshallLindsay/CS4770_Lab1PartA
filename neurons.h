@@ -17,8 +17,7 @@ Project Name: Lab1PartA
 
 /*
 Brief: The rosenblattPerceptron class is used to describe the features
-associated with, you guess it, the rosenblatt perceptron. We rename the
-class to "Neuron" as this will be the only neuron type.
+associated with, you guess it, the rosenblatt perceptron.
 */
 
 class rosenblattPerceptron{
@@ -32,7 +31,7 @@ private:
   void initializeWeights(); //Initialize the weight vector with random values
 
 public:
-  Neuron();                 //Initialize the neuron
+  rosenblattPerceptron();   //Initialize the neuron
   int8_t getLayer();        //Return the layer that the neuron is in
   int8_t getNumber();       //Return the neuron's number in the layer
   double getLocalGradient();//Return the local gradient
@@ -42,7 +41,7 @@ public:
   double getWeight(int number);//Return a single specified weight
 
 
-} Neuron;
+};
 
 
 class network {
