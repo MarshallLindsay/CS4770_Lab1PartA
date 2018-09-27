@@ -17,6 +17,12 @@ RosenblattPerceptron::RosenblattPerceptron(int layer, int number){
   //cout << "RosenblattPerceptron constructor" << endl;
   this->location[0] = layer;
   this->location[1] = number;
+  this->localField = 0;
+  this->localGradient = 0;
+  this->output = 0;
+  this-> bias = 0;
+  this-> learningRate = 0;
+  this-> momentumRate = 0;
 }
 
 RosenblattPerceptron::~RosenblattPerceptron(){
@@ -83,6 +89,27 @@ void RosenblattPerceptron::setMomentumRate(double mr){
   this->momentumRate = mr;
 }
 
+void RosenblattPerceptron::calculateLocalField(vector<double> inputData){
+
+  if(inputData.size() != this->weights.size()){
+    cout<<"You dun goofed... calculateLocalField"<<endl;
+  }
+
+
+  for(int i = 0; i < inputData.size(); i++){
+    cout<<"Weight : " << weights[i] << " Input: " << inputData[i] << endl;
+    this->localField += (weights[i])*(inputData[i]);
+  }
+  cout<<"Bias : " << this->getBias() << endl;
+  this->localField += this->getBias();
+  cout<<"Local field at "<< this->getLayer() << ","<< this->getNumber()<< " is " << this->getLocalField()<<endl;
+}
+
+void RosenblattPerceptron::calculateOutput(){
+  this->output = 1 / (1 + exp(-(this->getLocalField())));
+  cout<< "Output at "<< this->getLayer() << ","<< this->getNumber()<< " is " << this->getOutput()<< endl;
+}
+
 /***********************************************************************/
 
 
@@ -108,7 +135,7 @@ vector<int> Network::getInputs(){
   return(this->inputs);
 }
 
-vector<int> Network::getOutputs(){
+vector<vector<double>> Network::getOutputs(){
   return(this->outputs);
 }
 
@@ -180,4 +207,55 @@ void Network::setMomentumRate(double momentumRate){
     }
   }
 
+}
+
+void Network::forwardComputation(vector<double> inputTrainingData, vector<double> outputTrainingData){
+  //Caclulate local field for first layer
+  for(int i = 0; i < this->getNeuronsInLayer(0); i++){
+    this->neurons[0][i].calculateLocalField(inputTrainingData);
+  }
+
+  //Calculate the output for the first layer
+  for(int i = 0; i < this->getNeuronsInLayer(0); i++){
+    this->neurons[0][i].calculateOutput();
+  }
+
+  //Update the networks output vector
+  vector<double> temp;
+  for(int i = 0; i < this->getNeuronsInLayer(0); i++){
+    temp.push_back(this->neurons[0][i].getOutput());
+  }
+  this->outputs.push_back(temp);
+  temp.clear();
+
+  //Calculate the local field for the seceond layer
+  for(int i = 0; i < this->getNeuronsInLayer(1); i++){
+    this->neurons[1][i].calculateLocalField(this->outputs[0]);
+  }
+
+  //Calculate the output for the second layer
+  for(int i = 0; i < this->getNeuronsInLayer(1); i++){
+    this->neurons[1][i].calculateOutput();
+  }
+
+  //Update the networks output vector
+  for(int i = 0; i < this->getNeuronsInLayer(1); i++){
+    temp.push_back(this->neurons[1][i].getOutput());
+  }
+  this->outputs.push_back(temp);
+  temp.clear();
+
+  //Calculate the error
+  this->calculateError(outputTrainingData);
+}
+
+void Network::backwardComputation(){
+
+}
+
+void Network::calculateError(vector<double> outputTrainingData){
+  for(int i = 0; i < outputTrainingData.size(); i++){
+    this->error.push_back(outputTrainingData[i] - this->outputs[this->layerInfo.size() - 1][i]);
+    //cout<<"Error is " << this->error[i] << endl;
+  }
 }

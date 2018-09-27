@@ -54,13 +54,17 @@ public:
   void setLearningRate(double lr);
   void setMomentumRate(double mr);
 
+  void calculateLocalField(vector<double> inputData);
+  void calculateOutput();
+
 };
 
 
 class Network {
 private:
   vector<int> inputs;       //Input vector
-  vector<int> outputs;      //Output vector
+  vector<vector<double>> outputs;      //Output vector
+  vector<double> error;
   int numberOfLayers;       //Number of layers in the network
   vector<int> layerInfo;//Vector that contains the number of neurons in a layer
   vector<vector<RosenblattPerceptron>> neurons;   //Vector of al the neurons in the network
@@ -70,7 +74,7 @@ public:
   Network(vector<int> layerInfo);
   ~Network();
   vector<int> getInputs();
-  vector<int> getOutputs();
+  vector<vector<double>> getOutputs();
   int getNumberOfLayers();
   vector<int> getLayerInfo();
   int getNeuronsInLayer(int number);
@@ -83,6 +87,10 @@ public:
   void setBias(vector<double> inputBias, int layer);
   void setLearningRate(double learningRate);
   void setMomentumRate(double momentumRate);
+
+  void forwardComputation(vector<double> inputTrainingData, vector<double> outputTrainingData);
+  void backwardComputation();
+  void calculateError(vector<double> outputTrainingData);
 
 };
 

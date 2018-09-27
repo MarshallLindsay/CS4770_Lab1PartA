@@ -23,10 +23,14 @@ using namespace std;
 
 vector<vector<double>> weightVector;
 vector<double> biasVector;
+vector<vector<double>> inputTrainingData;
+vector<vector<double>> outputTrainingData;
+
 
 void readWeights(string filename);
 void readBias(string filename);
 void readTrainingData(string filename);
+void printTrainingData();
 
 int main(int argc, char **argv){
   vector<int> hello = {11,2};
@@ -83,6 +87,20 @@ int main(int argc, char **argv){
   //Read the training data
   readTrainingData("cross_data.csv");
 
+  //Print the training data
+  printTrainingData();
+
+  //Run the training data through the Network
+  int count = 0;
+  do{
+
+    net.forwardComputation(inputTrainingData[count], outputTrainingData[count]);
+    net.backwardComputation();
+    //net.printWeights();
+    //net.printBias();
+
+  }while(false);
+
 
   return(0);
 }
@@ -126,4 +144,56 @@ void readBias(string filename){
     exit(1);
   }
   biasFile.close();
+}
+
+void readTrainingData(string filename){
+  string line;
+  ifstream trainingFile (filename);
+  if(trainingFile.is_open()){
+
+    while(! trainingFile.eof()){
+      getline(trainingFile, line);
+      stringstream check1(line);
+      string intermediate;
+      vector<double> temp;
+      for(int i = 0; i < INPUTS; i++){
+        getline(check1, intermediate, ',');
+        temp.push_back(atof(intermediate.c_str()));
+      }
+      inputTrainingData.push_back(temp);
+      temp.clear();
+      for(int i = 0; i < OUTPUTS; i++){
+        getline(check1, intermediate, ',');
+        temp.push_back(atof(intermediate.c_str()));
+      }
+      outputTrainingData.push_back(temp);
+      temp.clear();
+    }
+  }else{
+    cout << "Could not open the file!" << endl;
+    exit(1);
+  }
+  trainingFile.close();
+}
+
+void printTrainingData(){
+
+  for(int i = 0; i < inputTrainingData.size(); i++){
+    cout<<"Input data: (";
+    for(int j = 0; j < INPUTS; j++){
+      cout<<inputTrainingData[i][j];
+      if(j < INPUTS - 1){
+        cout<<",";
+      }
+    }
+    cout<<")   Output data: (";
+    for(int j = 0; j < OUTPUTS; j++){
+      cout<<outputTrainingData[i][j];
+      if(j < OUTPUTS - 1){
+        cout<<",";
+      }
+    }
+    cout<<")"<<endl;
+  }
+
 }
