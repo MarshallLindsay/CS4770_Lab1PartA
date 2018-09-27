@@ -75,6 +75,16 @@ void RosenblattPerceptron::setBias(double inputBias){
   this->bias = inputBias;
 }
 
+void RosenblattPerceptron::setLearningRate(double lr){
+  this->learningRate = lr;
+}
+
+void RosenblattPerceptron::setMomentumRate(double mr){
+  this->momentumRate = mr;
+}
+
+/***********************************************************************/
+
 
 Network::Network(vector<int> layerInfo){
 //  cout << "Network constructor" << endl;
@@ -129,8 +139,10 @@ void Network::setWeights(vector<vector<double>> inputWeights, int layer){
   }
 }
 
-void Network::setBias(vector<double> inputBias){
-
+void Network::setBias(vector<double> inputBias, int layer){
+  for(int i = 0; i < this->layerInfo[layer]; i++){
+    this->neurons[layer][i].setBias(inputBias[i]);
+  }
 }
 
 void Network::printWeights(){
@@ -138,8 +150,33 @@ void Network::printWeights(){
   for(int i = 0; i < this->getNumberOfLayers(); i++){
     for(int j = 0; j < this->layerInfo[i]; j++){
       for(int k = 0; k < this->neurons[i][j].getWeights().size(); k++){
-        cout << this->neurons[i][j].getWeight(k) << endl;
+        cout << "Weight "<<i<<","<<j<<","<<k<<": "<<this->neurons[i][j].getWeight(k) << endl;
       }
+    }
+  }
+
+}
+
+void Network::printBias(){
+  for(int i = 0; i < this->getNumberOfLayers(); i++){
+    for(int j = 0; j < this->layerInfo[i]; j++){
+      cout << "Bias "<<i<<","<<j<<": "<< this->neurons[i][j].getBias() << endl;
+    }
+  }
+}
+
+void Network::setLearningRate(double learningRate){
+  for(int i = 0; i < this->getNumberOfLayers(); i++){
+    for(int j = 0; j < this->layerInfo[i]; j++){
+      this->neurons[i][j].setLearningRate(learningRate);
+    }
+  }
+}
+
+void Network::setMomentumRate(double momentumRate){
+  for(int i = 0; i < this->getNumberOfLayers(); i++){
+    for(int j = 0; j < this->layerInfo[i]; j++){
+      this->neurons[i][j].setMomentumRate(momentumRate);
     }
   }
 

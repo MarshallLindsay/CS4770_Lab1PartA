@@ -51,6 +51,8 @@ public:
 
   void setWeight(vector<double> inputWeights);
   void setBias(double inputBias);
+  void setLearningRate(double lr);
+  void setMomentumRate(double mr);
 
 };
 
@@ -75,9 +77,12 @@ public:
   vector<vector<RosenblattPerceptron>> getNeurons();
 
   void printWeights();
+  void printBias();
 
   void setWeights(vector<vector<double>> inputWeights, int layer);
-  void setBias(vector<double> inputBias);
+  void setBias(vector<double> inputBias, int layer);
+  void setLearningRate(double learningRate);
+  void setMomentumRate(double momentumRate);
 
 };
 
