@@ -255,7 +255,7 @@ void Network::backwardComputation(){
 
 void Network::calculateError(vector<double> outputTrainingData){
   for(int i = 0; i < outputTrainingData.size(); i++){
-    this->error.push_back(outputTrainingData[i] - this->outputs[this->layerInfo.size() - 1][i]);
+    this->error.push_back(outputTrainingData[i] - this->outputs[this->numberOfLayers - 1][i]);
     //cout<<"Error is " << this->error[i] << endl;
   }
 }
