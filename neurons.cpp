@@ -250,6 +250,21 @@ void Network::forwardComputation(vector<double> inputTrainingData, vector<double
 }
 
 void Network::backwardComputation(){
+  //Calculate local gradients
+  for(int i = this->getNumberOfLayers() -1 ; i > 0; i--){
+    vector<double> layerGradients;
+    for(int j = 0; j < this->getNeuronsInLayer(i); j++){
+
+      if(i == this->getNumberOfLayers() -1){   //If its the output neuron
+        this->neurons[i][j].calculateLocalGradient_output(this->error[j]);
+        this->layerGadients.push_back(this->neuron[i][j].getLocalGradient());
+      }else{                                  //If its a hidden neuron
+        this->neurons[i][j].calculateLocalGradient_hidden(this->neuronGradients[i+1]);
+        this->layerGadients.push_back(this->neuron[i][j].getLocalGradient());
+      }
+
+    }
+  }
 
 }
 

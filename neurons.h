@@ -56,6 +56,8 @@ public:
 
   void calculateLocalField(vector<double> inputData);
   void calculateOutput();
+  void calculateLocalGradient_output(double error);
+  void calculateLocalGradient_hidden();
 
 };
 
@@ -68,6 +70,7 @@ private:
   int numberOfLayers;       //Number of layers in the network
   vector<int> layerInfo;//Vector that contains the number of neurons in a layer
   vector<vector<RosenblattPerceptron>> neurons;   //Vector of al the neurons in the network
+  vector<vector<double>> neuronGradients;
 
   void addNeuron(RosenblattPerceptron neuron);
 public:
