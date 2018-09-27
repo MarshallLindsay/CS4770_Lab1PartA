@@ -88,7 +88,7 @@ int main(int argc, char **argv){
   readTrainingData("cross_data.csv");
 
   //Print the training data
-  printTrainingData();
+  //printTrainingData();
 
   //Run the training data through the Network
   int count = 0;
@@ -96,10 +96,12 @@ int main(int argc, char **argv){
 
     net.forwardComputation(inputTrainingData[count], outputTrainingData[count]);
     net.backwardComputation();
-    //net.printWeights();
-    //net.printBias();
-
-  }while(false);
+    net.printGradients();
+    net.printWeights();
+    net.printBias();
+    count++;
+  }while(count < inputTrainingData.size()-1);
+  cout<<"count : "<< count<< endl;
 
 
   return(0);

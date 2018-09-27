@@ -28,10 +28,13 @@ private:
   double localGradient;     //delta from notes
   double localField;        //v_j(k) from notes
   double output;            //y_j(k) from notes
+  double previousOutput;
   double bias;              //Bias attached to the neuron
+  double previousBias;
   double learningRate;      //The learning rate
   double momentumRate;      //The momentumRate
   vector<double> weights;   //Vector of all of the weights
+  vector<double> previousWeights;
 
   void randomizeWeights(); //Initialize the weight vector with random values
 
@@ -57,14 +60,18 @@ public:
   void calculateLocalField(vector<double> inputData);
   void calculateOutput();
   void calculateLocalGradient_output(double error);
-  void calculateLocalGradient_hidden(vector<double> previousLayerGradients);
-
+  void calculateLocalGradient_hidden(vector<double> previousLayerGradients, vector<double> previousWeights);
+  void updateBias();
+  void updateWeight(vector<double> previousLayerOutput);
+  double getPreviousBias();
+  double getPreviousOutput();
+  double getPreviousWeight(int number);
 };
 
 
 class Network {
 private:
-  vector<int> inputs;       //Input vector
+  vector<double> inputs;       //Input vector
   vector<vector<double>> outputs;      //Output vector
   vector<double> error;
   int numberOfLayers;       //Number of layers in the network
@@ -76,7 +83,7 @@ private:
 public:
   Network(vector<int> layerInfo);
   ~Network();
-  vector<int> getInputs();
+  vector<double> getInputs();
   vector<vector<double>> getOutputs();
   int getNumberOfLayers();
   vector<int> getLayerInfo();
@@ -85,6 +92,7 @@ public:
 
   void printWeights();
   void printBias();
+  void printGradients();
 
   void setWeights(vector<vector<double>> inputWeights, int layer);
   void setBias(vector<double> inputBias, int layer);
@@ -94,6 +102,8 @@ public:
   void forwardComputation(vector<double> inputTrainingData, vector<double> outputTrainingData);
   void backwardComputation();
   void calculateError(vector<double> outputTrainingData);
+
+  vector<double> getGradients(int layer);
 
 };
 
