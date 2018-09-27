@@ -24,7 +24,7 @@ associated with, you guess it, the rosenblatt perceptron.
 
 class RosenblattPerceptron{
 private:
-  int8_t location[2];       //layer , number.
+  int location[2];       //layer , number.
   double localGradient;     //delta from notes
   double localField;        //v_j(k) from notes
   double output;            //y_j(k) from notes
@@ -36,10 +36,10 @@ private:
   void randomizeWeights(); //Initialize the weight vector with random values
 
 public:
-  RosenblattPerceptron();   //Initialize the neuron
+  RosenblattPerceptron(int layer, int number);   //Initialize the neuron
   ~RosenblattPerceptron();
-  int8_t getLayer();        //Return the layer that the neuron is in
-  int8_t getNumber();       //Return the neuron's number in the layer
+  int getLayer();        //Return the layer that the neuron is in
+  int getNumber();       //Return the neuron's number in the layer
   double getLocalGradient();//Return the local gradient
   double getLocalField();   //Return the local field
   double getOutput();       //Return the output of the neuron
@@ -48,6 +48,9 @@ public:
   double getBias();         //Return the bias for the neuron
   double getLearningRate(); //Return the learningRate
   double getMomentumRate();  //Return the momentumRate
+
+  void setWeight(vector<double> inputWeights);
+  void setBias(double inputBias);
 
 };
 
@@ -58,8 +61,9 @@ private:
   vector<int> outputs;      //Output vector
   int numberOfLayers;       //Number of layers in the network
   vector<int> layerInfo;//Vector that contains the number of neurons in a layer
-  vector<RosenblattPerceptron> neurons;   //Vector of al the neurons in the network
+  vector<vector<RosenblattPerceptron>> neurons;   //Vector of al the neurons in the network
 
+  void addNeuron(RosenblattPerceptron neuron);
 public:
   Network(vector<int> layerInfo);
   ~Network();
@@ -68,7 +72,12 @@ public:
   int getNumberOfLayers();
   vector<int> getLayerInfo();
   int getNeuronsInLayer(int number);
-  vector<RosenblattPerceptron> getNeurons();
+  vector<vector<RosenblattPerceptron>> getNeurons();
+
+  void printWeights();
+
+  void setWeights(vector<vector<double>> inputWeights, int layer);
+  void setBias(vector<double> inputBias);
 
 };
 
