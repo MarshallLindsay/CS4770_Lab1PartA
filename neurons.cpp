@@ -110,6 +110,14 @@ void RosenblattPerceptron::calculateOutput(){
   cout<< "Output at "<< this->getLayer() << ","<< this->getNumber()<< " is " << this->getOutput()<< endl;
 }
 
+void RosenblattPerceptron::calculateLocalGradient_hidden(vector<double> previousLayerGradients){
+
+}
+
+void RosenblattPerceptron::calculateLocalGradient_output(double error){
+
+}
+
 /***********************************************************************/
 
 
@@ -250,21 +258,37 @@ void Network::forwardComputation(vector<double> inputTrainingData, vector<double
 }
 
 void Network::backwardComputation(){
-  //Calculate local gradients
-  for(int i = this->getNumberOfLayers() -1 ; i > 0; i--){
-    vector<double> layerGradients;
-    for(int j = 0; j < this->getNeuronsInLayer(i); j++){
-
-      if(i == this->getNumberOfLayers() -1){   //If its the output neuron
+  //Calculate local gradients//
+  vector<double> temp;
+   //For each layer starting with the output
+  for(int i = this->getNumberOfLayers() - 1 ; i > 0; i--){
+    //If this is the output layer
+    if(i == this->getNumberOfLayers() - 1 ){
+      //For each neuron in the output layer
+      for(int j = 0; j < this->getNeuronsInLayer(i); j++){
+        //Calculate the local gradient given its error
         this->neurons[i][j].calculateLocalGradient_output(this->error[j]);
-        this->layerGadients.push_back(this->neuron[i][j].getLocalGradient());
-      }else{                                  //If its a hidden neuron
-        this->neurons[i][j].calculateLocalGradient_hidden(this->neuronGradients[i+1]);
-        this->layerGadients.push_back(this->neuron[i][j].getLocalGradient());
+        //Add that gradient to the temp vector
+        temp.push_back(this->neurons[i][j].getLocalGradient());
       }
+    }else{ //If this is a hidden layer
 
+      //For each neuron in the hidden layer
+      for(int j = 0; j < this->getNeuronsInLayer(i); j++){
+        //Calculate the local gradient given the gradients of the layer before
+        this->neurons[i][j].calculateLocalGradient_hidden(this->neuronGradients[i+1]);
+
+        //Add that gradient to the temp vector
+        temp.push_back(this->neurons[i][j].getLocalGradient());
+      }
     }
+    //Record those gradients in the network
+    this->neuronGradients.push_back(temp);
+
+    //Clear the temp vector
+    temp.clear();
   }
+
 
 }
 

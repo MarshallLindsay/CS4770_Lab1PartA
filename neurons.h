@@ -57,7 +57,7 @@ public:
   void calculateLocalField(vector<double> inputData);
   void calculateOutput();
   void calculateLocalGradient_output(double error);
-  void calculateLocalGradient_hidden();
+  void calculateLocalGradient_hidden(vector<double> previousLayerGradients);
 
 };
 
