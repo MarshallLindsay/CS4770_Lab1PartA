@@ -14,6 +14,15 @@ Project Name: Lab1PartA
 using namespace std;
 
 int main(int argc, char **argv){
-  cout << "Hello World!" << endl;
+  vector<int> hello = {3,10,4};
+  Network *net = new Network(hello);
+
+  cout << net->getNumberOfLayers() << endl;
+
+  for(int i = 0; i < net->getNumberOfLayers(); i++){
+    cout << net->getNeuronsInLayer(i) << endl;
+  }
+
+  delete(net);
   return(0);
 }
