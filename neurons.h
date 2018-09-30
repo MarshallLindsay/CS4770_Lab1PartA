@@ -91,12 +91,12 @@ public:
   void setSpecificPreviousWeight(int number, double value);
 
   //Functional methods
-  void calculateLocalField();
+  void calculateLocalField(vector<double> inputData);
   void calculateOutput();
-  void calculateLocalGradient_output();
-  void calculateLocalGradient_hidden(vector<double> previousLayerGradients);
-  void calculateBias()
-  void calculateWeight();
+  void calculateLocalGradient_output(double error);
+  void calculateLocalGradient_hidden(vector<double> previousLayerGradients, vector<double> previousLayerWeights);
+  void calculateWeight(vector<double> previousLayerOutput);
+  void calculateBias();
 
 };
 

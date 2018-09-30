@@ -89,11 +89,11 @@ double RosenblattPerceptron::getSpecificWeight(int number){
   return(this->weights[number]);
 }
 
-vector<double> RosenblattPerceptron::getPreviousWeights(int number){
+vector<double> RosenblattPerceptron::getPreviousWeights(){
   return(this->previousWeights);
 }
 
-double RosenblattPerceptron::getPreviousSpecificWeight(int number){
+double RosenblattPerceptron::getSpecificPreviousWeight(int number){
   return(this->previousWeights[number]);
 }
 
@@ -189,28 +189,47 @@ void RosenblattPerceptron::calculateOutput(){
   //cout<< "Output at "<< this->getLayer() << ","<< this->getNumber()<< " is " << this->getOutput()<< endl;
 }
 
-void RosenblattPerceptron::calculateLocalGradient_hidden(vector<double> previousLayerGradients, vector<double> previousWeights){
-  double gradientTemp = 0;
-  //Summation
-  for(int i = 0; i < previousWeights.size(); i++){
-  //  cout << "PreviousWeights " << i << " : " << previousWeights[i]<<endl;
-  //  cout << "PreviousGradient " << i << " : " << previousLayerGradients[i] << endl;
-    gradientTemp += (previousLayerGradients[i] * previousWeights[i]);
-  }
-//  cout << "summation " << gradientTemp << endl;
-  //Derivative
-  gradientTemp *= (this->getOutput())*(1 - this->getOutput());
-  //cout << "final " << gradientTemp << endl;
-
-  this->localGradient = gradientTemp;
-
-}
-
 void RosenblattPerceptron::calculateLocalGradient_output(double error){
   this->localGradient = (error) * (this->getOutput()) * (1 - this->getOutput());
 }
 
-void RosenblattPerceptron::updateBias(){
+void RosenblattPerceptron::calculateLocalGradient_hidden(vector<double> previousLayerGradients, vector<double> previousLayerWeights){
+  //Summation
+  double summation = 0;
+  for(int i = 0; i < previousLayerGradients.size(); i++){
+    summation += (previousLayerGradients[i] * previousLayerWeights[i]);
+  }
+  //Gradient = Y(v)*(1 - Y(v))*(summation)
+  this->localGradient = (this->getOutput()) * (1 - this->getOutput()) * summation;
+}
+
+void RosenblattPerceptron::calculateWeight(vector<double> previousLayerOutput){
+  //For all of the weights of the neuron
+
+  for(int i = 0; i < this->getWeights().size() - 1; i++){
+    double previousWeightsTemp;
+    previousWeightsTemp = this->getSpecificWeight(i);
+  //  cout<<"Previous weight : "<<previousWeightsTemp<<endl;
+    //Save the previous weight
+    //Is this the first time saving previous weights?
+    if(this->previousWeights.size() < this->weights.size()){
+  //    cout<<"First time updating weights"<<endl;
+      //Update the current
+      this->weights[i] = this->getSpecificWeight(i) + (this->getLearningRate() * this->getLocalGradient() * previousLayerOutput[i]);
+    //  cout<<"Updated weight : "<< this->getWeight(i)<<endl;
+      //Update the previous
+      this->previousWeights.push_back(previousWeightsTemp);
+    }else{
+      //Update the current
+      this->weights[i] = this->getSpecificWeight(i) + (this->getMomentumRate() * (this->getSpecificWeight(i) - this->getSpeciPreviousWeight(i))) + (this->getLearningRate() * this->getLocalGradient() * previousLayerOutput[i]);
+  //    cout<<"Updated weight : "<< this->bias<<endl;
+      //Update the previous
+      this->previousWeights[i] = previousWeightsTemp;
+    }
+  }
+}
+
+void RosenblattPerceptron::calculateBias(){
   double temp = this->getBias();
   if(this->previousBias == 0){
     //cout<<"First time updating bias"<<endl;
@@ -224,31 +243,7 @@ void RosenblattPerceptron::updateBias(){
   this->previousBias = temp;
 }
 
-void RosenblattPerceptron::updateWeight(vector<double> previousLayerOutput){
-  //For all of the weights of the neuron
 
-  for(int i = 0; i < this->getWeights().size() - 1; i++){
-    double previousWeightsTemp;
-    previousWeightsTemp = this->getWeight(i);
-  //  cout<<"Previous weight : "<<previousWeightsTemp<<endl;
-    //Save the previous weight
-    //Is this the first time saving previous weights?
-    if(this->previousWeights.size() < this->weights.size()){
-  //    cout<<"First time updating weights"<<endl;
-      //Update the current
-      this->weights[i] = this->getWeight(i) + (this->getLearningRate() * this->getLocalGradient() * previousLayerOutput[i]);
-    //  cout<<"Updated weight : "<< this->getWeight(i)<<endl;
-      //Update the previous
-      this->previousWeights.push_back(previousWeightsTemp);
-    }else{
-      //Update the current
-      this->weights[i] = this->getWeight(i) + (this->getMomentumRate() * (this->getWeight(i) - this->getPreviousWeight(i))) + (this->getLearningRate() * this->getLocalGradient() * previousLayerOutput[i]);
-  //    cout<<"Updated weight : "<< this->bias<<endl;
-      //Update the previous
-      this->previousWeights[i] = previousWeightsTemp;
-    }
-  }
-}
 /******************************************************************************
                 END RosenblattPerceptron
 ******************************************************************************/
