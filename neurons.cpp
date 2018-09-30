@@ -160,25 +160,31 @@ void RosenblattPerceptron::setSpecificPreviousWeight(int number, double value){
 
 /**************START FUNCTIONAL METHODS***************************/
 
+/*
 
+
+*/
 void RosenblattPerceptron::calculateLocalField(vector<double> inputData){
 
   if(inputData.size() != this->weights.size()){
     cout<<"You dun goofed... calculateLocalField"<<endl;
+    exit(1);
   }
-
 
   for(int i = 0; i < inputData.size(); i++){
     //cout<<"Weight : " << weights[i] << " Input: " << inputData[i] << endl;
     this->localField += (weights[i])*(inputData[i]);
   }
+
   //cout<<"Bias : " << this->getBias() << endl;
   this->localField += this->getBias();
   //cout<<"Local field at "<< this->getLayer() << ","<< this->getNumber()<< " is " << this->getLocalField()<<endl;
-}
+  }
 
 void RosenblattPerceptron::calculateOutput(){
+  //Set the previous output equal to the current
   this->previousOutput = this->output;
+
   this->output = 1 / (1 + exp(-(this->getLocalField())));
   //cout<< "Output at "<< this->getLayer() << ","<< this->getNumber()<< " is " << this->getOutput()<< endl;
 }
