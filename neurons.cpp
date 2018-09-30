@@ -13,17 +13,22 @@ Project Name: Lab1PartA
 
 using namespace std;
 
+
+/******************************************************************************
+                START RosenblattPerceptron
+******************************************************************************/
+
 RosenblattPerceptron::RosenblattPerceptron(int layer, int number){
   //cout << "RosenblattPerceptron constructor" << endl;
-  this->location[0] = layer;
-  this->location[1] = number;
-  this->localField = 0;
-  this->localGradient = 0;
-  this->output = 0;
-  this-> bias = 0;
-  this-> learningRate = 0;
-  this-> momentumRate = 0;
-  this->previousBias = 0;
+  this->setLayer(layer);
+  this->setNumberInLayer(number);
+  this->setLocalField(0);
+  this->setLocalGradient(0);
+  this->setOutput(0);
+  this->setBias(0);
+  this->setLearningRate(0);
+  this->setMomentumRate(0);
+  this->setPreviousBias(0);
 }
 
 RosenblattPerceptron::~RosenblattPerceptron(){
@@ -31,15 +36,17 @@ RosenblattPerceptron::~RosenblattPerceptron(){
 }
 
 void RosenblattPerceptron::randomizeWeights(){
-
+  //Not used in this lab.. Write later..
 }
+
+/*****************START GETTERS**************************/
 
 int RosenblattPerceptron::getLayer(){
-  return(this->location[0]);
+  return(this->layer);
 }
 
-int RosenblattPerceptron::getNumber(){
-  return(this->location[1]);
+int RosenblattPerceptron::getNumberInLayer(){
+  return(this->numberInLayer);
 }
 
 double RosenblattPerceptron::getLocalGradient(){
@@ -54,16 +61,16 @@ double RosenblattPerceptron::getOutput(){
   return(this->output);
 }
 
-vector<double> RosenblattPerceptron::getWeights(){
-  return(this->weights);
-}
-
-double RosenblattPerceptron::getWeight(int number){
-  return(this->weights[number]);
+double RosenblattPerceptron::getPreviousOutput(){
+  return(this->previousOutput);
 }
 
 double RosenblattPerceptron::getBias(){
   return(this->bias);
+}
+
+double RosenblattPerceptron::getPreviousBias(){
+  return(this->previousBias);
 }
 
 double RosenblattPerceptron::getLearningRate(){
@@ -74,21 +81,85 @@ double RosenblattPerceptron::getMomentumRate(){
   return(this->momentumRate);
 }
 
-void RosenblattPerceptron::setWeight(vector<double> inputWeights){
-  this->weights = inputWeights;
+vector<double> RosenblattPerceptron::getWeights(){
+  return(this->weights);
 }
 
-void RosenblattPerceptron::setBias(double inputBias){
-  this->bias = inputBias;
+double RosenblattPerceptron::getSpecificWeight(int number){
+  return(this->weights[number]);
 }
 
-void RosenblattPerceptron::setLearningRate(double lr){
-  this->learningRate = lr;
+vector<double> RosenblattPerceptron::getPreviousWeights(int number){
+  return(this->previousWeights);
 }
 
-void RosenblattPerceptron::setMomentumRate(double mr){
-  this->momentumRate = mr;
+double RosenblattPerceptron::getPreviousSpecificWeight(int number){
+  return(this->previousWeights[number]);
 }
+
+/**************END GETTERS*****************************************/
+
+/**************START SETTERS**************************************/
+
+void RosenblattPerceptron::setLayer(int layer){
+  this->layer = layer;
+}
+
+void RosenblattPerceptron::setNumberInLayer(int number){
+  this->numberInLayer = number;
+}
+
+void RosenblattPerceptron::setLocalGradient(double gradient){
+  this->localGradient = gradient;
+}
+
+void RosenblattPerceptron::setLocalField(double field){
+  this->localField = field;
+}
+
+void RosenblattPerceptron::setOutput(double output){
+  this->output = output;
+}
+
+void RosenblattPerceptron::setPreviousOutput(double prevOutput){
+  this->previousOutput = prevOutput;
+}
+
+void RosenblattPerceptron::setBias(double bias){
+  this->bias = bias;
+}
+
+void RosenblattPerceptron::setPreviousBias(double prevBias){
+  this->previousBias = prevBias;
+}
+
+void RosenblattPerceptron::setLearningRate(double learningRate){
+  this->learningRate = learningRate;
+}
+
+void RosenblattPerceptron::setMomentumRate(double momentumRate){
+  this->momentumRate = momentumRate;
+}
+
+void RosenblattPerceptron::setWeights(vector<double> weights){
+  this->weights = weights;
+}
+
+void RosenblattPerceptron::setSpecificWeight(int number, double value){
+  this->weights[number] = value;
+}
+
+void RosenblattPerceptron::setPreviousWeights(vector<double> previousWeights){
+  this->previousWeights = previousWeights;
+}
+
+void RosenblattPerceptron::setSpecificPreviousWeight(int number, double value){
+  this->previousWeights[number] = value;
+}
+/******************END SETTERS************************************/
+
+/**************START FUNCTIONAL METHODS***************************/
+
 
 void RosenblattPerceptron::calculateLocalField(vector<double> inputData){
 
@@ -172,21 +243,9 @@ void RosenblattPerceptron::updateWeight(vector<double> previousLayerOutput){
     }
   }
 }
-
-double RosenblattPerceptron::getPreviousBias(){
-  return(this->previousBias);
-}
-
-double RosenblattPerceptron::getPreviousOutput(){
-  return(this->previousOutput);
-}
-
-double RosenblattPerceptron::getPreviousWeight(int number){
-  return(this->previousWeights[number]);
-}
-/***********************************************************************/
-
-
+/******************************************************************************
+                END RosenblattPerceptron
+******************************************************************************/
 Network::Network(vector<int> layerInfo){
 //  cout << "Network constructor" << endl;
   this->numberOfLayers = layerInfo.size();
