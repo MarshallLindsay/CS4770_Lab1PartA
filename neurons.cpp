@@ -248,22 +248,28 @@ void RosenblattPerceptron::calculateBias(){
                 END RosenblattPerceptron
 ******************************************************************************/
 Network::Network(vector<int> layerInfo, vector<vector<double>> initialWeights){
-//  cout << "Network constructor" << endl;
-  this->numberOfLayers = layerInfo.size();
-  this->layerInfo = layerInfo;
-  for(int i = 0; i < this->numberOfLayers; i++){
-    vector<RosenblattPerceptron> temp;
-    for(int j = 0; j < this->layerInfo[i]; j++){
-      RosenblattPerceptron neuron(i,j);
-      temp.push_back(neuron);
+  this->setNumberOfLayers(layerInfo.size());
+  this->setLayerInfo(layerInfo);
+
+  //Set up the framework
+  //cout<<"Number of layers: "<<this->getNumberOfLayers()<<endl;
+  for(int layer = 0; layer < this->getNumberOfLayers(); layer++){
+    vector<RosenblattPerceptron> tempLayerOfNeurons;
+    for(int number = 0; number < layerInfo[layer]; number++){
+      tempLayerOfNeurons.push_back(RosenblattPerceptron(layer,number));
     }
-    this->allNeurons.push_back(temp);
+    this->allNeurons.push_back(tempLayerOfNeurons);
   }
+  //cout<<"Layer info 0 " << this->getNeuronsInLayer(0)<<endl;
+  //cout<<"Layer info 1 " << this->getNeuronsInLayer(1)<<endl;
+
+  //Set the weights
+
 }
 
 //Private METHODS
 void Network::addNeuron(RosenblattPerceptron neuron){
-  //this->neurons.push_back(neuron);
+  //this->allNeurons.push_back(neuron);
 }
 
 void Network::calculateError(){

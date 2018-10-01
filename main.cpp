@@ -37,9 +37,18 @@ int main(int argc, char **argv){
   readTrainingData("cross_data.csv");
 
   //Set up the network
-    //Set up layers and layer numbers
-  readWeights("w1.csv");
 
+  vector<int> layerInfo;
+  for(int i = 1; i < argc; i++){
+    //cout<<atoi(argv[i])<<endl;
+    layerInfo.push_back(atoi(argv[i]));
+  }
+  readWeights("w1.csv");
+  weightVector.pop_back();
+  readWeights("w2.csv");
+  weightVector.pop_back();
+
+  Network net = Network(layerInfo, weightVector);
 
   return(0);
 }
