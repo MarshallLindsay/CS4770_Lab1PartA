@@ -33,7 +33,14 @@ void readTrainingData(string filename);
 void printTrainingData();
 
 int main(int argc, char **argv){
-  cout<<"Hello World!"<<endl;
+  //Read the training data
+  readTrainingData("cross_data.csv");
+
+  //Set up the network
+    //Set up layers and layer numbers
+  readWeights("w1.csv");
+
+
   return(0);
 }
 

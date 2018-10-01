@@ -125,7 +125,7 @@ private:
 
 public:
   //How do we initialize/construct a network?
-  Network(vector<int> layerInfo);
+  Network(vector<int> layerInfo, vector<vector<double>> initialWeights);
   //How do we destruct a network?
   ~Network();
 
