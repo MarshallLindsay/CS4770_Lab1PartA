@@ -47,8 +47,20 @@ int main(int argc, char **argv){
   weightVector.pop_back();
   readWeights("w2.csv");
   weightVector.pop_back();
+  readBias("b1.csv");
+  biasVector.pop_back();
+  readBias("b2.csv");
+  biasVector.pop_back();
 
-  Network net = Network(layerInfo, weightVector);
+
+  Network net = Network(layerInfo, weightVector, biasVector, LEARNING_RATE, MOMENTUM_RATE);
+
+  do{
+    net.setInputs(inputTrainingData[0]);
+    net.setOutputs(outputTrainingData[0]);
+    net.train();
+  }while(0);
+
 
   return(0);
 }
