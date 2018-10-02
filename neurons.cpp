@@ -174,24 +174,30 @@ void RosenblattPerceptron::calculateLocalField(vector<double> inputData){
   for(int i = 0; i < inputData.size(); i++){
     //cout<<"Weight : " << weights[i] << " Input: " << inputData[i] << endl;
     this->localField += (weights[i])*(inputData[i]);
+  //  cout<<"Weight : " << weights[i] << endl;
+  //  cout<<"Input " << inputData[i] << endl;
   }
 
   //cout<<"Bias : " << this->getBias() << endl;
   this->localField += this->getBias();
-  //cout<<"Local field at "<< this->getLayer() << ","<< this->getNumberInLayer()<< " is " << this->getLocalField()<<endl;
+//  cout<<"Bias : " << this->getBias() << endl;
+//  cout<<"Local field at "<< this->getLayer() << ","<< this->getNumberInLayer()<< " is " << this->getLocalField()<<endl;
   }
 
 void RosenblattPerceptron::calculateOutput(){
   //Set the previous output equal to the current
   this->previousOutput = this->output;
-
+//  cout<<"Local field " << this->getLocalField() <<endl;
   this->output = 1 / (1 + exp(-(this->getLocalField())));
+  //cout<<"Output " << this->getOutput() << endl;
   //cout<< "Output at "<< this->getLayer() << ","<< this->getNumberInLayer()<< " is " << this->getOutput()<< endl;
 }
 
 void RosenblattPerceptron::calculateLocalGradient_output(double error){
+  //cout<< "Error " << error << endl;
+  //cout<< "Output " << this->getOutput() << endl;
   this->localGradient = (error) * (this->getOutput()) * (1 - this->getOutput());
-  //cout<< "Local gradient output "<< this->getLayer() << ","<< this->getNumberInLayer()<< " is " << this->getLocalGradient()<< endl;
+//  cout<< "Local gradient output "<< this->getLayer() << ","<< this->getNumberInLayer()<< " is " << this->getLocalGradient()<< endl;
 
 }
 
@@ -199,12 +205,18 @@ void RosenblattPerceptron::calculateLocalGradient_hidden(vector<double> previous
   //Summation
   double summation = 0;
   for(int i = 0; i < previousLayerGradients.size(); i++){
+    cout<<"Previous gradient " << i << ":" << previousLayerGradients[i]<<endl;
+    cout<<"Previous weight " << i << ":" << previousLayerWeights[i]<<endl;
     summation += (previousLayerGradients[i] * previousLayerWeights[i]);
+
   }
+//  cout<<"Summation " << summation << endl;
   //Gradient = Y(v)*(1 - Y(v))*(summation)
   //cout<<"Local gradient summation hidden is " << summation << endl;
   //cout<<"Local gradient output used is " << this->getOutput() << endl;
+//  cout<<"Output " << this->getOutput() << endl;
   this->localGradient = (this->getOutput()) * (1 - this->getOutput()) * summation;
+//  cout<<"Local Gradient " << this->getLocalGradient() <<endl;
   //cout<<"Local gradient hidden final is " << this->getLocalGradient() << endl;
 }
 
@@ -212,27 +224,35 @@ void RosenblattPerceptron::calculateWeight(vector<double> previousLayerOutput){
   //cout<<"At Neuron " << this->getLayer() << "," << this->getNumberInLayer() << endl;
   for(int weightNumber = 0; weightNumber < this->getWeights().size(); weightNumber++){
     //Momentum term
+    cout<<"Momentum rate " << this->getMomentumRate() <<endl;
+    cout<<"Current weight " << this->getWeights()[weightNumber] <<endl;
+    cout<<"Previous weight " << this->getPreviousWeights()[weightNumber] <<endl;
     double momentum = this->getMomentumRate() * (this->getWeights()[weightNumber] - this->getPreviousWeights()[weightNumber]);
-    //cout<<"Weight momentum term: " << momentum << endl;
+    cout<<"Weight momentum term: " << momentum << endl;
     this->setSpecificPreviousWeight(weightNumber, this->getSpecificWeight(weightNumber));
 
-    //Learning term
+    //Learning ter
+    cout<<"Learning rate " << this->getLearningRate() << endl;
+    cout<<"Local gradient " << this->getLocalGradient() << endl;
+    cout<<"Previous layer output " << previousLayerOutput[weightNumber] <<endl;
     double learning = this->getLearningRate() * this->getLocalGradient() * previousLayerOutput[weightNumber];
-    //cout<<"Weight learning term: " << learning << endl;
+    cout<<"Weight learning term: " << learning << endl;
 
     //Delta
     double deltaWeight = momentum + learning;
+    cout<<"Delta weight " << deltaWeight << endl;
 
     this->setSpecificWeight(weightNumber, this->getSpecificWeight(weightNumber) + deltaWeight);
-    //cout<<"New weight: " << this->getSpecificWeight(weightNumber) << endl;
-    //cout<<"Old weight: " << this->getSpecificPreviousWeight(weightNumber) << endl;
+    cout<<"New weight: " << this->getSpecificWeight(weightNumber) << endl;
+    cout<<"Old weight: " << this->getSpecificPreviousWeight(weightNumber) << endl;
   }
 }
 
 void RosenblattPerceptron::calculateBias(){
   //Delta bias:
   //Calculate the momentum term
-
+  //cout<<"Current bias " << this->getBias() << endl;
+  //cout<<"Previous bias " << this->getPreviousBias() << endl;
   double momentumTerm = this->getMomentumRate() * (this->getBias() - this->getPreviousBias());
   //cout<<"Bias momentumTerm: " << momentumTerm <<endl;
 
@@ -240,14 +260,16 @@ void RosenblattPerceptron::calculateBias(){
   this->setPreviousBias(this->getBias());
 
   //Calculate learning term
+//  cout<<"Learning rate: " << this->getLearningRate() << endl;
+//  cout<<"Local gradient " << this->getLocalGradient() << endl;
   double learningTerm = this->getLearningRate() * this->getLocalGradient();
   //cout<<"Bias learningTerm: " << learningTerm << endl;
 
   double deltaBias = momentumTerm + learningTerm;
-
+//  cout<< "Delta bias " << deltaBias << endl;
   this->setBias(this->getBias() + deltaBias);
-  //cout<<"New bias : " << this->getBias() << endl;
-  //cout<<"Old bias : " << this->getPreviousBias() << endl;
+//  cout<<"New bias : " << this->getBias() << endl;
+//  cout<<"Old bias : " << this->getPreviousBias() << endl;
 }
 
 
@@ -297,8 +319,10 @@ void Network::calculateError(){
   int lastLayer = this->getNumberOfLayers() - 1;
   vector<double> tempError;
   for(int i = 0; i < this->getNeuronsInLayer(lastLayer); i++){
+  //  cout<<"Expected Output : " << this->getOutputs()[i] << endl;
+  //  cout<<"Output " << this->allNeurons[lastLayer][i].getOutput() << endl;
     tempError.push_back(this->getOutputs()[i] - this->allNeurons[lastLayer][i].getOutput());
-    //cout<<tempError[i]<<endl;
+  //  cout<<"Error " << tempError[i]<<endl;
   }
   this->error = tempError;
 

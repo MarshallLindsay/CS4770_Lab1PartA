@@ -60,7 +60,7 @@ int main(int argc, char **argv){
     net.setOutputs(outputTrainingData[0]);
     net.train();
     count++;
-  }while(count < 315);
+  }while(count < 0);
 
   net.printWeights();
 
