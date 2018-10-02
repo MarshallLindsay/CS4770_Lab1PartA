@@ -517,5 +517,13 @@ void Network::printWeights(){
     }
   }
 }
+void Network::printBias(){
+  for(int layer = 0; layer < this->getNumberOfLayers(); layer++){
+    for(int number = 0; number < this->getNeuronsInLayer(layer); number++){
+      cout<<"Neuron ("<<layer<<","<<number<<")"<<endl;
+      cout<<"Bias: "<<this->allNeurons[layer][number].getBias()<<endl;
+    }
+  }
+}
 
 //End funtional METHODS

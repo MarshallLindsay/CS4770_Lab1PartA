@@ -56,13 +56,14 @@ int main(int argc, char **argv){
   Network net = Network(layerInfo, weightVector, biasVector, LEARNING_RATE, MOMENTUM_RATE);
   int count = 0;
   do{
-    net.setInputs(inputTrainingData[0]);
-    net.setOutputs(outputTrainingData[0]);
+    net.setInputs(inputTrainingData[count]);
+    net.setOutputs(outputTrainingData[count]);
     net.train();
     count++;
   }while(count < 315);
 
   net.printWeights();
+  net.printBias();
 
 
   return(0);

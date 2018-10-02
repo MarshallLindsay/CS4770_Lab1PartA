@@ -153,6 +153,7 @@ public:
   void train();
   void run(); //Same idea as train just with no backprop.
   void printWeights();
+  void printBias();
 };
 
 #endif // NEURONS_H_
