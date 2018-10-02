@@ -205,8 +205,8 @@ void RosenblattPerceptron::calculateLocalGradient_hidden(vector<double> previous
   //Summation
   double summation = 0;
   for(int i = 0; i < previousLayerGradients.size(); i++){
-    cout<<"Previous gradient " << i << ":" << previousLayerGradients[i]<<endl;
-    cout<<"Previous weight " << i << ":" << previousLayerWeights[i]<<endl;
+    //cout<<"Previous gradient " << i << ":" << previousLayerGradients[i]<<endl;
+    //cout<<"Previous weight " << i << ":" << previousLayerWeights[i]<<endl;
     summation += (previousLayerGradients[i] * previousLayerWeights[i]);
 
   }
@@ -224,27 +224,27 @@ void RosenblattPerceptron::calculateWeight(vector<double> previousLayerOutput){
   //cout<<"At Neuron " << this->getLayer() << "," << this->getNumberInLayer() << endl;
   for(int weightNumber = 0; weightNumber < this->getWeights().size(); weightNumber++){
     //Momentum term
-    cout<<"Momentum rate " << this->getMomentumRate() <<endl;
-    cout<<"Current weight " << this->getWeights()[weightNumber] <<endl;
-    cout<<"Previous weight " << this->getPreviousWeights()[weightNumber] <<endl;
+    //cout<<"Momentum rate " << this->getMomentumRate() <<endl;
+    //cout<<"Current weight " << this->getWeights()[weightNumber] <<endl;
+    //cout<<"Previous weight " << this->getPreviousWeights()[weightNumber] <<endl;
     double momentum = this->getMomentumRate() * (this->getWeights()[weightNumber] - this->getPreviousWeights()[weightNumber]);
-    cout<<"Weight momentum term: " << momentum << endl;
+    //cout<<"Weight momentum term: " << momentum << endl;
     this->setSpecificPreviousWeight(weightNumber, this->getSpecificWeight(weightNumber));
 
     //Learning ter
-    cout<<"Learning rate " << this->getLearningRate() << endl;
-    cout<<"Local gradient " << this->getLocalGradient() << endl;
-    cout<<"Previous layer output " << previousLayerOutput[weightNumber] <<endl;
+    //cout<<"Learning rate " << this->getLearningRate() << endl;
+    //cout<<"Local gradient " << this->getLocalGradient() << endl;
+    //cout<<"Previous layer output " << previousLayerOutput[weightNumber] <<endl;
     double learning = this->getLearningRate() * this->getLocalGradient() * previousLayerOutput[weightNumber];
-    cout<<"Weight learning term: " << learning << endl;
+    //cout<<"Weight learning term: " << learning << endl;
 
     //Delta
     double deltaWeight = momentum + learning;
-    cout<<"Delta weight " << deltaWeight << endl;
+    //cout<<"Delta weight " << deltaWeight << endl;
 
     this->setSpecificWeight(weightNumber, this->getSpecificWeight(weightNumber) + deltaWeight);
-    cout<<"New weight: " << this->getSpecificWeight(weightNumber) << endl;
-    cout<<"Old weight: " << this->getSpecificPreviousWeight(weightNumber) << endl;
+    //cout<<"New weight: " << this->getSpecificWeight(weightNumber) << endl;
+    //cout<<"Old weight: " << this->getSpecificPreviousWeight(weightNumber) << endl;
   }
 }
 
