@@ -152,6 +152,7 @@ public:
   //Functional methods
   void train();
   void run(); //Same idea as train just with no backprop.
+  void printWeights();
 };
 
 #endif // NEURONS_H_
