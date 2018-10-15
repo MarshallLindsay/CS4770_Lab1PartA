@@ -32,22 +32,28 @@ private:
   double localGradient;
   //What is the local field?
   double localField;
-  //What is the outpu?
-  double output;
+  //What is the current outpu?
+  double currentOutput;
   //What was the previous output?
   double previousOutput;
-  //What is the bias?
-  double bias;
+  //What is the next output?
+  double nextOutput;
+  //What is the current bias?
+  double currentBias;
   //What is the previous bias?
   double previousBias;
+  //What is the next bias?
+  double nextBias;
   //What is the learning rate?
   double learningRate;
   //What is the momentum rate?
   double momentumRate;
-  //What are the weights?
-  vector<double> weights;
+  //What are the current weights?
+  vector<double> currentWeights;
   //What are the previous weights?
   vector<double> previousWeights;
+  //What are the next weights?
+  vector<double> nextWeights;
 
   void randomizeWeights(); //Initialize the weight vector with random values.. Not used for this lab
 
@@ -63,32 +69,40 @@ public:
   int getNumberInLayer();
   double getLocalGradient();
   double getLocalField();
-  double getOutput();
+  double getCurrentOutput();
   double getPreviousOutput();
-  double getBias();
+  double getNextOutput();
+  double getCurrentBias();
   double getPreviousBias();
+  double getNextBias();
   double getLearningRate();
   double getMomentumRate();
-  vector<double> getWeights();
-  double getSpecificWeight(int number);
+  vector<double> getCurrentWeights();
+  double getSpecificCurrentWeight(int number);
   vector<double> getPreviousWeights();
   double getSpecificPreviousWeight(int number);
+  vector<double> getNextWeights();
+  double getSpecificNextWeight(int number);
 
   //Setters for all of my members
   void setLayer(int layer);
   void setNumberInLayer(int number);
   void setLocalGradient(double gradient);
   void setLocalField(double field);
-  void setOutput(double output);
-  void setPreviousOutput(double prevOutput);
-  void setBias(double bias);
-  void setPreviousBias(double prevBias);
+  void setCurrentOutput(double currentOutput);
+  void setPreviousOutput(double previousOutput);
+  void setNextOutput(double nextOutput);
+  void setCurrentBias(double currentBias);
+  void setPreviousBias(double previousBias);
+  void setNextBias(double nextBias);
   void setLearningRate(double learningRate);
   void setMomentumRate(double momentumRate);
-  void setWeights(vector<double> weights);
-  void setSpecificWeight(int number, double value);
+  void setCurrentWeights(vector<double> currentWeights);
+  void setSpecificCurrentWeight(int number, double value);
   void setPreviousWeights(vector<double> previousWeights);
   void setSpecificPreviousWeight(int number, double value);
+  void setNextWeights(vector<double> nextWeights);
+  void setSpecificNextWeight(int number, double value);
 
   //Functional methods
   void calculateLocalField(vector<double> inputData);

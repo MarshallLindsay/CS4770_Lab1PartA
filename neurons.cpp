@@ -8,8 +8,6 @@ Project Name: Lab1PartA
 */
 
 #include "neurons.h"
-#include <iostream>
-
 
 using namespace std;
 
@@ -24,11 +22,14 @@ RosenblattPerceptron::RosenblattPerceptron(int layer, int number){
   this->setNumberInLayer(number);
   this->setLocalField(0);
   this->setLocalGradient(0);
-  this->setOutput(0);
-  this->setBias(0);
+  this->setCurrentOutput(0);
+  this->setPreviousOutput(0);
+  this->setNextOutput(0);
+  this->setCurrentBias(0);
+  this->setPreviousBias(0);
+  this->setNextBias(0);
   this->setLearningRate(0);
   this->setMomentumRate(0);
-  this->setPreviousBias(0);
 }
 
 RosenblattPerceptron::~RosenblattPerceptron(){
@@ -57,20 +58,28 @@ double RosenblattPerceptron::getLocalField(){
   return(this->localField);
 }
 
-double RosenblattPerceptron::getOutput(){
-  return(this->output);
+double RosenblattPerceptron::getCurrentOutput(){
+  return(this->currentOutput);
 }
 
 double RosenblattPerceptron::getPreviousOutput(){
   return(this->previousOutput);
 }
 
-double RosenblattPerceptron::getBias(){
-  return(this->bias);
+double RosenblattPerceptron::getNextOutput(){
+  return(this->nextOutput);
+}
+
+double RosenblattPerceptron::getCurrentBias(){
+  return(this->currentBias);
 }
 
 double RosenblattPerceptron::getPreviousBias(){
   return(this->previousBias);
+}
+
+double RosenblattPerceptron::getNextBias(){
+  return(this->nextBias);
 }
 
 double RosenblattPerceptron::getLearningRate(){
@@ -81,12 +90,12 @@ double RosenblattPerceptron::getMomentumRate(){
   return(this->momentumRate);
 }
 
-vector<double> RosenblattPerceptron::getWeights(){
-  return(this->weights);
+vector<double> RosenblattPerceptron::getCurrentWeights(){
+  return(this->currentWeights);
 }
 
-double RosenblattPerceptron::getSpecificWeight(int number){
-  return(this->weights[number]);
+double RosenblattPerceptron::getSpecificCurrentWeight(int number){
+  return(this->currentWeights[number]);
 }
 
 vector<double> RosenblattPerceptron::getPreviousWeights(){
@@ -97,6 +106,13 @@ double RosenblattPerceptron::getSpecificPreviousWeight(int number){
   return(this->previousWeights[number]);
 }
 
+vector<double> RosenblattPerceptron::getNextWeights(){
+  return(this->nextWeights);
+}
+
+double RosenblattPerceptron::getSpecificNextWeight(int number){
+  return(this->nextWeights[number]);
+}
 /**************END GETTERS*****************************************/
 
 /**************START SETTERS**************************************/
@@ -117,20 +133,28 @@ void RosenblattPerceptron::setLocalField(double field){
   this->localField = field;
 }
 
-void RosenblattPerceptron::setOutput(double output){
-  this->output = output;
+void RosenblattPerceptron::setCurrentOutput(double currentOutput){
+  this->currentOutput = currentOutput;
 }
 
-void RosenblattPerceptron::setPreviousOutput(double prevOutput){
-  this->previousOutput = prevOutput;
+void RosenblattPerceptron::setPreviousOutput(double previousOutput){
+  this->previousOutput = previousOutput;
 }
 
-void RosenblattPerceptron::setBias(double bias){
-  this->bias = bias;
+void RosenblattPerceptron::setNextOutput(double nextOutput){
+  this->nextOutput = nextOutput;
 }
 
-void RosenblattPerceptron::setPreviousBias(double prevBias){
-  this->previousBias = prevBias;
+void RosenblattPerceptron::setCurrentBias(double currentBias){
+  this->currentBias = currentBias;
+}
+
+void RosenblattPerceptron::setPreviousBias(double previousBias){
+  this->previousBias = previousBias;
+}
+
+void RosenblattPerceptron::setNextBias(double nextBias){
+  this->nextBias = nextBias;
 }
 
 void RosenblattPerceptron::setLearningRate(double learningRate){
@@ -141,12 +165,12 @@ void RosenblattPerceptron::setMomentumRate(double momentumRate){
   this->momentumRate = momentumRate;
 }
 
-void RosenblattPerceptron::setWeights(vector<double> weights){
-  this->weights = weights;
+void RosenblattPerceptron::setCurrentWeights(vector<double> currentWeights){
+  this->currentWeights = currentWeights;
 }
 
-void RosenblattPerceptron::setSpecificWeight(int number, double value){
-  this->weights[number] = value;
+void RosenblattPerceptron::setSpecificCurrentWeight(int number, double value){
+  this->currentWeights[number] = value;
 }
 
 void RosenblattPerceptron::setPreviousWeights(vector<double> previousWeights){
@@ -155,6 +179,14 @@ void RosenblattPerceptron::setPreviousWeights(vector<double> previousWeights){
 
 void RosenblattPerceptron::setSpecificPreviousWeight(int number, double value){
   this->previousWeights[number] = value;
+}
+
+void RosenblattPerceptron::setNextWeights(vector<double> nextWeights){
+  this->nextWeights = nextWeights;
+}
+
+void RosenblattPerceptron::setSpecificNextWeight(int number, double value){
+  this->nextWeights[number] = value;
 }
 /******************END SETTERS************************************/
 
@@ -242,7 +274,7 @@ void RosenblattPerceptron::calculateWeight(vector<double> previousLayerOutput){
     double deltaWeight = momentum + learning;
     //cout<<"Delta weight " << deltaWeight << endl;
 
-    this->setSpecificWeight(weightNumber, this->getSpecificWeight(weightNumber) + deltaWeight);
+    this->setSpecificCurrentWeight(weightNumber, this->getSpecificWeight(weightNumber) + deltaWeight);
     //cout<<"New weight: " << this->getSpecificWeight(weightNumber) << endl;
     //cout<<"Old weight: " << this->getSpecificPreviousWeight(weightNumber) << endl;
   }
@@ -267,7 +299,7 @@ void RosenblattPerceptron::calculateBias(){
 
   double deltaBias = momentumTerm + learningTerm;
 //  cout<< "Delta bias " << deltaBias << endl;
-  this->setBias(this->getBias() + deltaBias);
+  this->setCurrentBias(this->getBias() + deltaBias);
 //  cout<<"New bias : " << this->getBias() << endl;
 //  cout<<"Old bias : " << this->getPreviousBias() << endl;
 }
@@ -296,9 +328,9 @@ Network::Network(vector<int> layerInfo, vector<vector<double>> initialWeights, v
   int counter = 0;
   for(int i = 0; i < this->getNumberOfLayers(); i++){
     for(int j = 0; j < this->getNeuronsInLayer(i); j++){
-      this->allNeurons[i][j].setWeights(initialWeights[counter]);
+      this->allNeurons[i][j].setCurrentWeights(initialWeights[counter]);
       this->allNeurons[i][j].setPreviousWeights(initialWeights[counter]);
-      this->allNeurons[i][j].setBias(biasVector[counter]);
+      this->allNeurons[i][j].setCurrentBias(biasVector[counter]);
       this->allNeurons[i][j].setPreviousBias(biasVector[counter]);
       this->allNeurons[i][j].setLearningRate(learning);
       this->allNeurons[i][j].setMomentumRate(momentum);
