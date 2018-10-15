@@ -24,87 +24,136 @@ associated with, you guess it, the rosenblatt perceptron.
 
 class RosenblattPerceptron{
 private:
-  int location[2];       //layer , number.
-  double localGradient;     //delta from notes
-  double localField;        //v_j(k) from notes
-  double output;            //y_j(k) from notes
+  //Where is the neuron in the network?
+  int layer;
+  int numberInLayer;
+
+  //What is the local gradient?
+  double localGradient;
+  //What is the local field?
+  double localField;
+  //What is the outpu?
+  double output;
+  //What was the previous output?
   double previousOutput;
-  double bias;              //Bias attached to the neuron
+  //What is the bias?
+  double bias;
+  //What is the previous bias?
   double previousBias;
-  double learningRate;      //The learning rate
-  double momentumRate;      //The momentumRate
-  vector<double> weights;   //Vector of all of the weights
+  //What is the learning rate?
+  double learningRate;
+  //What is the momentum rate?
+  double momentumRate;
+  //What are the weights?
+  vector<double> weights;
+  //What are the previous weights?
   vector<double> previousWeights;
 
-  void randomizeWeights(); //Initialize the weight vector with random values
+  void randomizeWeights(); //Initialize the weight vector with random values.. Not used for this lab
 
 public:
-  RosenblattPerceptron(int layer, int number);   //Initialize the neuron
+
+  //How do we initialize.contstruct a neuron?
+  RosenblattPerceptron(int layer, int number);
+  //How do we destruct a neuron?
   ~RosenblattPerceptron();
-  int getLayer();        //Return the layer that the neuron is in
-  int getNumber();       //Return the neuron's number in the layer
-  double getLocalGradient();//Return the local gradient
-  double getLocalField();   //Return the local field
-  double getOutput();       //Return the output of the neuron
-  vector<double> getWeights();//Return the weight vector
-  double getWeight(int number);//Return a single specified weight
-  double getBias();         //Return the bias for the neuron
-  double getLearningRate(); //Return the learningRate
-  double getMomentumRate();  //Return the momentumRate
 
-  void setWeight(vector<double> inputWeights);
-  void setBias(double inputBias);
-  void setLearningRate(double lr);
-  void setMomentumRate(double mr);
+  //Getters for all the members
+  int getLayer();
+  int getNumberInLayer();
+  double getLocalGradient();
+  double getLocalField();
+  double getOutput();
+  double getPreviousOutput();
+  double getBias();
+  double getPreviousBias();
+  double getLearningRate();
+  double getMomentumRate();
+  vector<double> getWeights();
+  double getSpecificWeight(int number);
+  vector<double> getPreviousWeights();
+  double getSpecificPreviousWeight(int number);
 
+  //Setters for all of my members
+  void setLayer(int layer);
+  void setNumberInLayer(int number);
+  void setLocalGradient(double gradient);
+  void setLocalField(double field);
+  void setOutput(double output);
+  void setPreviousOutput(double prevOutput);
+  void setBias(double bias);
+  void setPreviousBias(double prevBias);
+  void setLearningRate(double learningRate);
+  void setMomentumRate(double momentumRate);
+  void setWeights(vector<double> weights);
+  void setSpecificWeight(int number, double value);
+  void setPreviousWeights(vector<double> previousWeights);
+  void setSpecificPreviousWeight(int number, double value);
+
+  //Functional methods
   void calculateLocalField(vector<double> inputData);
   void calculateOutput();
   void calculateLocalGradient_output(double error);
-  void calculateLocalGradient_hidden(vector<double> previousLayerGradients, vector<double> previousWeights);
-  void updateBias();
-  void updateWeight(vector<double> previousLayerOutput);
-  double getPreviousBias();
-  double getPreviousOutput();
-  double getPreviousWeight(int number);
+  void calculateLocalGradient_hidden(vector<double> previousLayerGradients, vector<double> previousLayerWeights);
+  void calculateWeight(vector<double> previousLayerOutput);
+  void calculateBias();
+
 };
 
 
 class Network {
 private:
-  vector<double> inputs;       //Input vector
-  vector<vector<double>> outputs;      //Output vector
+  //What are my inputs for a single run?
+  vector<double> inputs;
+  //What are my outputs for a single run?
+  vector<double> outputs;
+  //What are the errors for a single run?
   vector<double> error;
-  int numberOfLayers;       //Number of layers in the network
-  vector<int> layerInfo;//Vector that contains the number of neurons in a layer
-  vector<vector<RosenblattPerceptron>> neurons;   //Vector of al the neurons in the network
-  vector<vector<double>> neuronGradients;
+  //What is the summed squared errors for the run?
+  double sumSquaredError;
+  //How many layers are in the network?
+  int numberOfLayers;
+  //How many neurons are in each layer?
+  vector<int> layerInfo;
+  //What neurons?
+  vector<vector<RosenblattPerceptron>> allNeurons;
 
+  //Private functional methods
   void addNeuron(RosenblattPerceptron neuron);
+  void calculateError();
+  void calculateSumSquaredError();
+
 public:
-  Network(vector<int> layerInfo);
+  //How do we initialize/construct a network?
+  Network(vector<int> layerInfo, vector<vector<double>> initialWeights, vector<double> biasVector, double learning, double momentum);
+  //How do we destruct a network?
   ~Network();
+
+  //Getters for all the members
   vector<double> getInputs();
-  vector<vector<double>> getOutputs();
+  vector<double> getOutputs();
+  vector<double> getError();
+  double getSumSquaredError();
   int getNumberOfLayers();
   vector<int> getLayerInfo();
-  int getNeuronsInLayer(int number);
-  vector<vector<RosenblattPerceptron>> getNeurons();
+  int getNeuronsInLayer(int layer);
+  RosenblattPerceptron getNeuron(int layer, int number);
+  vector<RosenblattPerceptron> getLayerOfNeurons(int layer);
+  vector<vector<RosenblattPerceptron>> getAllNeurons();
 
+  //Setters for all the members (I might need to change the variable names)
+  void setInputs(vector<double> inputs);
+  void setOutputs(vector<double> outputs);
+  void setError(vector<double> errors);     //I don't think this will ever be used
+  void setSumSquaredError(double sumSquaredError); //Probably never used
+  void setNumberOfLayers(double numLayers);
+  void setLayerInfo(vector<int> layerInfo);
+
+  //Functional methods
+  void train();
+  void run(); //Same idea as train just with no backprop.
   void printWeights();
   void printBias();
-  void printGradients();
-
-  void setWeights(vector<vector<double>> inputWeights, int layer);
-  void setBias(vector<double> inputBias, int layer);
-  void setLearningRate(double learningRate);
-  void setMomentumRate(double momentumRate);
-
-  void forwardComputation(vector<double> inputTrainingData, vector<double> outputTrainingData);
-  void backwardComputation();
-  void calculateError(vector<double> outputTrainingData);
-
-  vector<double> getGradients(int layer);
-
 };
 
 #endif // NEURONS_H_

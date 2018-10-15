@@ -33,75 +33,37 @@ void readTrainingData(string filename);
 void printTrainingData();
 
 int main(int argc, char **argv){
-  vector<int> hello = {11,2};
-  Network net = Network(hello);
-
-  //Read the weights for the first layer
-  readWeights("w1.csv");
-
-  //Set the weights for the first layer
-  net.setWeights(weightVector, 0);
-
-  //Clear the weight vector
-  weightVector.clear();
-
-  //Read the weights for the output layer
-  readWeights("w2.csv");
-
-  //Set the weights for the output layer
-  net.setWeights(weightVector, 1);
-
-  //Clear the weight vector
-  weightVector.clear();
-
-  //Print the weights (DEBUGG)
-  net.printWeights();
-
-  //Read the bias for the first layer
-  readBias("b1.csv");
-
-  //Set the bias for the first layer
-  net.setBias(biasVector, 0);
-
-  //Clear the biasVector
-  biasVector.clear();
-
-  //Read the bias for the second layer
-  readBias("b2.csv");
-
-  //Set the bias for the second layer
-  net.setBias(biasVector, 1);
-
-  //Clear the bias vector
-  biasVector.clear();
-
-  //Print the bias' (DEBUGG)
-  net.printBias();
-
-  //Set the learning rates
-  net.setLearningRate(LEARNING_RATE);
-
-  //Set the momentum rates
-  net.setMomentumRate(MOMENTUM_RATE);
-
   //Read the training data
   readTrainingData("cross_data.csv");
 
-  //Print the training data
-  //printTrainingData();
+  //Set up the network
 
-  //Run the training data through the Network
+  vector<int> layerInfo;
+  for(int i = 1; i < argc; i++){
+    //cout<<atoi(argv[i])<<endl;
+    layerInfo.push_back(atoi(argv[i]));
+  }
+  readWeights("w1.csv");
+  weightVector.pop_back();
+  readWeights("w2.csv");
+  weightVector.pop_back();
+  readBias("b1.csv");
+  biasVector.pop_back();
+  readBias("b2.csv");
+  biasVector.pop_back();
+
+
+  Network net = Network(layerInfo, weightVector, biasVector, LEARNING_RATE, MOMENTUM_RATE);
   int count = 0;
   do{
-
-    net.forwardComputation(inputTrainingData[count], outputTrainingData[count]);
-    net.backwardComputation();
-    net.printGradients();
-    net.printWeights();
-    net.printBias();
+    net.setInputs(inputTrainingData[count]);
+    net.setOutputs(outputTrainingData[count]);
+    net.train();
     count++;
-  }while(count < inputTrainingData.size()-1);
-  cout<<"count : "<< count<< endl;
+  }while(count < 315);
+
+  net.printWeights();
+  net.printBias();
 
 
   return(0);
