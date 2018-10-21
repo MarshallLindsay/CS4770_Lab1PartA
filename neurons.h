@@ -106,10 +106,10 @@ public:
 
   //Functional methods
   void calculateLocalField(vector<double> inputData);
-  void calculateOutput();
+  void calculateCurrentOutput();
   void calculateLocalGradient_output(double error);
-  void calculateLocalGradient_hidden(vector<double> previousLayerGradients, vector<double> previousLayerWeights);
-  void calculateWeight(vector<double> previousLayerOutput);
+  void calculateLocalGradient_hidden(vector<double> nextLayerGradients, vector<double> nextLayerWeights);
+  void calculateNextWeight(vector<double> previousLayerOutput);
   void calculateBias();
 
 };
