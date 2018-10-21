@@ -168,6 +168,8 @@ public:
   void run(); //Same idea as train just with no backprop.
   void printWeights();
   void printBias();
+  void printErrors();
+  void printOutputs();
   void update();
 };
 
