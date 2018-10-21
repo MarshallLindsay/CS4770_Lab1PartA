@@ -494,7 +494,7 @@ void Network::train(){
   }
 
   //Update the network with the calculated values
-  //this->update();
+  this->update();
 
 }
 

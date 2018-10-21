@@ -13,6 +13,8 @@ Project Name: Lab1PartA
 #include <fstream>
 #include <string.h>
 #include <bits/stdc++.h>
+#include <ctime>
+#include <algorithm>
 
 #define LEARNING_RATE 0.7
 #define MOMENTUM_RATE 0.3
@@ -23,6 +25,7 @@ int inputs = 0;
 int outputs = 0;
 vector<vector<double>> weightVector;
 vector<double> biasVector;
+vector<vector<double>> trainingData;
 vector<vector<double>> inputTrainingData;
 vector<vector<double>> outputTrainingData;
 
@@ -31,8 +34,11 @@ void readWeights(string filename);
 void readBias(string filename);
 void readTrainingData(string filename);
 void printTrainingData();
+void printNewTrainingData();
 void printErrors();
 void printOutputs();
+void shuffleData();
+void separateTrainingData();
 
 int main(int argc, char **argv){
   cout<<fixed;
@@ -42,9 +48,8 @@ int main(int argc, char **argv){
 
   //Read the training data
   readTrainingData("cross_data.csv");
-  inputTrainingData.pop_back();
-  outputTrainingData.pop_back();
-  //printTrainingData();
+  trainingData.pop_back();
+
   //Set up the network
   vector<int> layerInfo;
   for(int i = 3; i < argc; i++){
@@ -63,19 +68,18 @@ int main(int argc, char **argv){
   int userinput;
   Network net = Network(layerInfo, weightVector, biasVector, LEARNING_RATE, MOMENTUM_RATE);
   int count = 0;
-  do{
-    cout<<"Training number : " << count<< endl;
-    net.setInputs(inputTrainingData[count]);
-    net.setOutputs(outputTrainingData[count]);
-    //printTrainingData();
-    net.train();
-    net.update();
-    count++;
-  //  net.printOutputs();
-  //  net.printErrors();
 
-  }while(count < 314);
-
+do{
+    separateTrainingData();
+    //train for an epoc
+    for(int number = 0; number < trainingData.size(); number++){
+      net.setInputs(inputTrainingData[number]);
+      net.setOutputs(outputTrainingData[number]);
+      //printTrainingData();
+      net.train();
+    }
+    //shuffleData();
+  }while(0);
   net.printWeights();
   net.printBias();
   net.printErrors();
@@ -132,7 +136,7 @@ void readTrainingData(string filename){
   string::size_type sz;
   ifstream trainingFile (filename);
   if(trainingFile.is_open()){
-
+    int count = 0;
     while(! trainingFile.eof()){
       getline(trainingFile, line);
     //  cout<<line<<endl;
@@ -141,22 +145,21 @@ void readTrainingData(string filename){
       string intermediate;
       //Grab the inputs from the line
       vector<double> tempVector;
+      trainingData.push_back(tempVector);
     //  cout<<inputs<<endl;
       for(int i = 0; i < inputs; i++){
         getline(check1,intermediate,',');
       //  cout<<intermediate<<endl;
-        tempVector.push_back(atof(intermediate.c_str()));
+        trainingData[count].push_back(atof(intermediate.c_str()));
       }
-      inputTrainingData.push_back(tempVector);
       //Grab the outputs from the line
       tempVector.clear();
       for(int i = 0; i < outputs; i++){
         getline(check1, intermediate, ',');
       //  cout<<intermediate<<endl;;
-        tempVector.push_back(atof(intermediate.c_str()));
+        trainingData[count].push_back(atof(intermediate.c_str()));
       }
-      outputTrainingData.push_back(tempVector);
-
+      count++;
     }
   }else{
     cout << "Could not open the file!" << endl;
@@ -185,4 +188,32 @@ void printTrainingData(){
     cout<<")"<<endl;
   }
 
+}
+
+void printNewTrainingData(){
+  for(int i = 0; i < trainingData.size(); i++){
+    for(int j = 0; j < trainingData[i].size(); j++){
+      cout<<trainingData[i][j] << " ";
+    }
+    cout<<endl;
+  }
+
+}
+
+void separateTrainingData(){
+  inputTrainingData.clear();
+  outputTrainingData.clear();
+  vector<double> tempVector;
+  for(int i = 0; i < trainingData.size(); i++){
+    for(int number = 0; number < inputs; number++){
+      tempVector.push_back(trainingData[i][number]);
+    }
+    inputTrainingData.push_back(tempVector);
+    tempVector.clear();
+    for(int number = 0; number < outputs; number++){
+      tempVector.push_back(trainingData[i][number+inputs]);
+    }
+    outputTrainingData.push_back(tempVector);
+    tempVector.clear();
+  }
 }
