@@ -78,9 +78,9 @@ int main(int argc, char **argv){
 
   net.printWeights();
   net.printBias();
-  net.printSumSquaredError();
-
-
+  net.printErrors();
+  net.calculateMSE();
+  net.printMSE();
 
 
   return(0);

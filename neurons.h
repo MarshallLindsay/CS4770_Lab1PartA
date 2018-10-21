@@ -124,7 +124,11 @@ private:
   //What are the errors for a single run?
   vector<double> error;
   //What is the summed squared errors for the run?
-  double sumSquaredError;
+  vector<double> sumSquaredError;
+  //How fast is the sumSquaredError changing?
+  double deltaSSE;
+  //What is the MSE?
+  double MSE;
   //How many layers are in the network?
   int numberOfLayers;
   //How many neurons are in each layer?
@@ -147,21 +151,23 @@ public:
   vector<double> getInputs();
   vector<double> getOutputs();
   vector<double> getError();
-  double getSumSquaredError();
+  vector<double> getSumSquaredError();
   int getNumberOfLayers();
   vector<int> getLayerInfo();
   int getNeuronsInLayer(int layer);
   RosenblattPerceptron getNeuron(int layer, int number);
   vector<RosenblattPerceptron> getLayerOfNeurons(int layer);
   vector<vector<RosenblattPerceptron>> getAllNeurons();
+  double getMSE();
 
   //Setters for all the members (I might need to change the variable names)
   void setInputs(vector<double> inputs);
   void setOutputs(vector<double> outputs);
   void setError(vector<double> errors);     //I don't think this will ever be used
-  void setSumSquaredError(double sumSquaredError); //Probably never used
+  void setSumSquaredError(vector<double> sumSquaredError); //Probably never used
   void setNumberOfLayers(double numLayers);
   void setLayerInfo(vector<int> layerInfo);
+  void setMSE(double value);
 
   //Functional methods
   void train();
@@ -171,7 +177,8 @@ public:
   void printErrors();
   void printOutputs();
   void update();
-  void printSumSquaredError();
+  void printMSE();
+  void calculateMSE();
 };
 
 #endif // NEURONS_H_

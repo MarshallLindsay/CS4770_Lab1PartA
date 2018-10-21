@@ -272,7 +272,7 @@ void RosenblattPerceptron::calculateNextBias(){
 Network::Network(vector<int> layerInfo, vector<vector<double>> initialWeights, vector<double> biasVector, double learning, double momentum){
   this->setNumberOfLayers(layerInfo.size());
   this->setLayerInfo(layerInfo);
-
+  this->deltaSSE = 0.0;
   //Set up the framework
   for(int layer = 0; layer < this->getNumberOfLayers(); layer++){
     vector<RosenblattPerceptron> tempLayerOfNeurons;
@@ -283,7 +283,6 @@ Network::Network(vector<int> layerInfo, vector<vector<double>> initialWeights, v
   }
 
   //Set the weights
-  //This is dumb... rewrite later... TODO
   int counter = 0;
   for(int i = 0; i < this->getNumberOfLayers(); i++){
     for(int j = 0; j < this->getNeuronsInLayer(i); j++){
@@ -318,14 +317,13 @@ void Network::calculateError(){
 void Network::calculateSumSquaredError(){
 
     //Summation
+
     double summation = 0;
     for(int i = 0; i < this->error.size(); i++){
-      summation += pow((this->error[i]),2);
+        summation += pow((this->error[i]),2);
     }
-    //Multiplication out front
-    summation *= 0.5;
 
-    this->setSumSquaredError(summation);
+    this->sumSquaredError.push_back(summation);
 }
 
 //End private METHODS
@@ -348,7 +346,7 @@ vector<double> Network::getError(){
   return(this->error);
 }
 
-double Network::getSumSquaredError(){
+vector<double> Network::getSumSquaredError(){
   return(this->sumSquaredError);
 }
 
@@ -376,6 +374,10 @@ vector<vector<RosenblattPerceptron>> Network::getAllNeurons(){
   return(this->allNeurons);
 }
 
+double Network::getMSE(){
+  return(this->MSE);
+}
+
 //END GETTERS
 
 
@@ -392,7 +394,7 @@ void Network::setError(vector<double> errors){
   this->error = errors;
 }
 
-void Network::setSumSquaredError(double sumSquaredError){
+void Network::setSumSquaredError(vector<double> sumSquaredError){
   this->sumSquaredError = sumSquaredError;
 }
 
@@ -402,6 +404,10 @@ void Network::setNumberOfLayers(double numLayers){
 
 void Network::setLayerInfo(vector<int> layerInfo){
   this->layerInfo = layerInfo;
+}
+
+void Network::setMSE(double value){
+  this->MSE = value;
 }
 
 //End SETTERS
@@ -433,7 +439,6 @@ void Network::train(){
   //Caclulate the errors
   this->calculateError();
 
-  //Caclulate sum squared error
   this->calculateSumSquaredError();
 
   //Back propagation
@@ -545,9 +550,21 @@ void Network::printErrors(){
   }
 }
 
-void Network::printSumSquaredError(){
+void Network::printMSE(){
 
-  cout<<"SSE: "<<this->getSumSquaredError()<<endl;
+  cout<<"MSE : "<< this->getMSE() <<endl;
+
+}
+
+void Network::calculateMSE(){
+
+  double summation = 0;
+
+  for(int i = 0; i < this->sumSquaredError.size(); i++){
+    summation += this->sumSquaredError[i];
+  }
+
+  this->setMSE(summation / (2*this->sumSquaredError.size()));
 }
 
 //End funtional METHODS
