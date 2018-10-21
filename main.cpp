@@ -71,11 +71,14 @@ int main(int argc, char **argv){
     net.train();
     net.update();
     count++;
-    net.printOutputs();
-    net.printErrors();
-    net.printWeights();
-    net.printBias();
+  //  net.printOutputs();
+  //  net.printErrors();
+
   }while(count < 314);
+
+  net.printWeights();
+  net.printBias();
+  net.printSumSquaredError();
 
 
 

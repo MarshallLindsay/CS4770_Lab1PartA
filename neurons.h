@@ -171,6 +171,7 @@ public:
   void printErrors();
   void printOutputs();
   void update();
+  void printSumSquaredError();
 };
 
 #endif // NEURONS_H_

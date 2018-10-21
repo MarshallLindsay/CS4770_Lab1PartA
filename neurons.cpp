@@ -545,5 +545,9 @@ void Network::printErrors(){
   }
 }
 
+void Network::printSumSquaredError(){
+
+  cout<<"SSE: "<<this->getSumSquaredError()<<endl;
+}
 
 //End funtional METHODS
