@@ -59,8 +59,9 @@ int main(int argc, char **argv){
     net.setInputs(inputTrainingData[count]);
     net.setOutputs(outputTrainingData[count]);
     net.train();
+    net.update();
     count++;
-  }while(count < 315);
+  }while(count < 0);
 
   net.printWeights();
   net.printBias();

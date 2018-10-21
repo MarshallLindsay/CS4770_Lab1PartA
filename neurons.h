@@ -110,7 +110,7 @@ public:
   void calculateLocalGradient_output(double error);
   void calculateLocalGradient_hidden(vector<double> nextLayerGradients, vector<double> nextLayerWeights);
   void calculateNextWeight(vector<double> previousLayerOutput);
-  void calculateBias();
+  void calculateNextBias();
 
 };
 
@@ -168,6 +168,7 @@ public:
   void run(); //Same idea as train just with no backprop.
   void printWeights();
   void printBias();
+  void update();
 };
 
 #endif // NEURONS_H_

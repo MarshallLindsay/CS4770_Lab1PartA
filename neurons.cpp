@@ -214,7 +214,7 @@ void RosenblattPerceptron::calculateLocalField(vector<double> inputData){
 
 
 //Fixed
-void RosenblattPerceptron::calculateNextOutput(){
+void RosenblattPerceptron::calculateCurrentOutput(){
   this->currentOutput = 1 / (1 + exp(-(this->getLocalField())));
 }
 
@@ -227,7 +227,7 @@ void RosenblattPerceptron::calculateLocalGradient_output(double error){
 void RosenblattPerceptron::calculateLocalGradient_hidden(vector<double> nextLayerGradients, vector<double> nextLayerWeights){
   //Summation
   double summation = 0;
-  for(int i = 0; i < previousLayerGradients.size(); i++){
+  for(int i = 0; i < nextLayerGradients.size(); i++){
     summation += (nextLayerGradients[i] * nextLayerWeights[i]);
   }
   //Derivative portion
@@ -238,7 +238,7 @@ void RosenblattPerceptron::calculateLocalGradient_hidden(vector<double> nextLaye
 void RosenblattPerceptron::calculateNextWeight(vector<double> previousLayerOutput){
   for(int weightNumber = 0; weightNumber < this->getCurrentWeights().size(); weightNumber++){
     //Momentum term
-    double momentum = this->getMomentumRate() * (this->getSpecificCurrentWeight(weightNumber) - this->getSpecificPreviousWeights(weightNumber));
+    double momentum = this->getMomentumRate() * (this->getSpecificCurrentWeight(weightNumber) - this->getSpecificPreviousWeight(weightNumber));
 
     //Learning term
     double learning = this->getLearningRate() * this->getLocalGradient() * previousLayerOutput[weightNumber];
@@ -267,12 +267,15 @@ void RosenblattPerceptron::calculateNextBias(){
 /******************************************************************************
                 END RosenblattPerceptron
 ******************************************************************************/
+
+/******************************************************************************
+                START Network
+******************************************************************************/
 Network::Network(vector<int> layerInfo, vector<vector<double>> initialWeights, vector<double> biasVector, double learning, double momentum){
   this->setNumberOfLayers(layerInfo.size());
   this->setLayerInfo(layerInfo);
 
   //Set up the framework
-  //cout<<"Number of layers: "<<this->getNumberOfLayers()<<endl;
   for(int layer = 0; layer < this->getNumberOfLayers(); layer++){
     vector<RosenblattPerceptron> tempLayerOfNeurons;
     for(int number = 0; number < layerInfo[layer]; number++){
@@ -280,10 +283,9 @@ Network::Network(vector<int> layerInfo, vector<vector<double>> initialWeights, v
     }
     this->allNeurons.push_back(tempLayerOfNeurons);
   }
-  //cout<<"Layer info 0 " << this->getNeuronsInLayer(0)<<endl;
-  //cout<<"Layer info 1 " << this->getNeuronsInLayer(1)<<endl;
 
   //Set the weights
+  //This is dumb... rewrite later... TODO
   int counter = 0;
   for(int i = 0; i < this->getNumberOfLayers(); i++){
     for(int j = 0; j < this->getNeuronsInLayer(i); j++){
@@ -293,7 +295,6 @@ Network::Network(vector<int> layerInfo, vector<vector<double>> initialWeights, v
       this->allNeurons[i][j].setPreviousBias(biasVector[counter]);
       this->allNeurons[i][j].setLearningRate(learning);
       this->allNeurons[i][j].setMomentumRate(momentum);
-      //cout<<"Bias at "<< i << "," <<j<<" : "<< biasVector[counter] <<endl;
       counter++;
     }
   }
@@ -306,21 +307,25 @@ void Network::addNeuron(RosenblattPerceptron neuron){
 }
 
 void Network::calculateError(){
-
   int lastLayer = this->getNumberOfLayers() - 1;
   vector<double> tempError;
   for(int i = 0; i < this->getNeuronsInLayer(lastLayer); i++){
-  //  cout<<"Expected Output : " << this->getOutputs()[i] << endl;
-  //  cout<<"Output " << this->allNeurons[lastLayer][i].getOutput() << endl;
-    tempError.push_back(this->getOutputs()[i] - this->allNeurons[lastLayer][i].getOutput());
-  //  cout<<"Error " << tempError[i]<<endl;
+    tempError.push_back(this->getOutputs()[i] - this->allNeurons[lastLayer][i].getCurrentOutput());
   }
   this->error = tempError;
-
 }
 
 void Network::calculateSumSquaredError(){
 
+    //Summation
+    double summation = 0;
+    for(int i = 0; i < this->error.size(); i++){
+      summation += pow((this->error[i]),2);
+    }
+    //Multiplication out front
+    summation *= 0.5;
+
+    this->setSumSquaredError(summation);
 }
 
 //End private METHODS
@@ -404,60 +409,52 @@ void Network::setLayerInfo(vector<int> layerInfo){
 //Start functional METHODS
 void Network::train(){
   //Forward computation
-  //Calculate localField for the first layer
-  for(int number = 0; number < this->getNeuronsInLayer(0); number++){
-    this->allNeurons[0][number].calculateLocalField(this->getInputs());
-  }
+  vector<double> inputVector;
+  inputVector = this->getInputs();
+  for(int layer = 0; layer < this->getNumberOfLayers(); layer++){
+    //Calculate localField for the first layer
+    for(int number = 0; number < this->getNeuronsInLayer(layer); number++){
+      this->allNeurons[layer][number].calculateLocalField(inputVector);
+    }
 
-  //Calculate output of the first layer
-  for(int number = 0; number < this->getNeuronsInLayer(0); number++){
-    this->allNeurons[0][number].calculateOutput();
-  }
+    //Calculate output of the first layer
+    for(int number = 0; number < this->getNeuronsInLayer(layer); number++){
+      this->allNeurons[layer][number].calculateCurrentOutput();
+    }
 
-  //Build a temp vector of the previous layers outpus
-  vector<double> tempVector;
-  for(int i = 0; i < this->getNeuronsInLayer(0); i++){
-    tempVector.push_back(this->allNeurons[0][i].getOutput());
-    //cout<<tempVector[i]<<endl;
-  }
-
-  //Calculate localField for the second layer
-  for(int number = 0; number < this->getNeuronsInLayer(1); number++){
-    this->allNeurons[1][number].calculateLocalField(tempVector);
-  }
-  tempVector.clear();
-
-  //Calculate output of the second layer
-  for(int number = 0; number < this->getNeuronsInLayer(1); number++){
-    this->allNeurons[1][number].calculateOutput();
+    //Clear first.
+    inputVector.clear();
+    for(int i = 0; i < this->getNeuronsInLayer(layer); i++){
+      inputVector.push_back(this->allNeurons[layer][i].getCurrentOutput());
+    }
   }
 
   //Caclulate the errors
   this->calculateError();
 
   //Caclulate sum squared error
-  //this->calculateSumSquaredError();
+  this->calculateSumSquaredError();
 
   //Back propagation
 
   //Calculate local gradients
   for(int layer = this->getNumberOfLayers() - 1; layer >=0; layer--){
     for(int number = 0; number < this->getNeuronsInLayer(layer); number++){
-      if(layer == this->getNumberOfLayers() -1){
+      if(layer == this->getNumberOfLayers() -1){ //output layer
         //cout<<"For neuron " << layer << " " << number << ":" << endl;
         this->allNeurons[layer][number].calculateLocalGradient_output(this->getError()[number]);
       }else{
-        //Grab the previous gradients
+        //Grab the next layer gradients
         //cout<<"For neuron " << layer << " " << number << ":" << endl;
         vector<double> tempGradients;
         for(int i = 0; i < this->getNeuronsInLayer(layer+1); i++){
           tempGradients.push_back(this->allNeurons[layer+1][i].getLocalGradient());
         //  cout<<"tempGradient "<< tempGradients[i] << endl;
         }
-        //Grab the previous weights
+        //Grab the next weights
         vector<double> tempWeights;
         for(int i = 0; i < this->getNeuronsInLayer(layer+1); i++){
-          tempWeights.push_back(this->allNeurons[layer+1][i].getWeights()[number]);
+          tempWeights.push_back(this->allNeurons[layer+1][i].getCurrentWeights()[number]);
         //  cout<<"tempWeights " << tempWeights[i] << endl;
         }
         //Send to the calc function for a hidden neuron
@@ -469,7 +466,7 @@ void Network::train(){
   //Calculate new bias's
   for(int layer = this->getNumberOfLayers() -1; layer >=0; layer--){
     for(int number = 0; number < this->getNeuronsInLayer(layer); number++){
-      this->allNeurons[layer][number].calculateBias();
+      this->allNeurons[layer][number].calculateNextBias();
     }
   }
 
@@ -483,14 +480,16 @@ void Network::train(){
         prevOutputs = this->getInputs();
       }else{
         for(int i = 0; i < this->getNeuronsInLayer(layer -1); i++){
-          prevOutputs.push_back(this->allNeurons[layer-1][i].getOutput());
+          prevOutputs.push_back(this->allNeurons[layer-1][i].getCurrentOutput());
         }
       }
 
-      this->allNeurons[layer][number].calculateWeight(prevOutputs);
+      this->allNeurons[layer][number].calculateNextWeight(prevOutputs);
     }
   }
 
+  //Update the network with the calculated values
+  this->update();
 
 }
 
@@ -502,8 +501,8 @@ void Network::printWeights(){
   for(int layer = 0; layer < this->getNumberOfLayers(); layer++){
     for(int number = 0; number < this->getNeuronsInLayer(layer); number++){
       cout<<"Neuron ("<<layer<<","<<number<<")"<<endl;
-      for(int i = 0; i < this->allNeurons[layer][number].getWeights().size(); i++){
-        cout<<"Weight: " << i << " = " << this->allNeurons[layer][number].getSpecificWeight(i)<<endl;
+      for(int i = 0; i < this->allNeurons[layer][number].getCurrentWeights().size(); i++){
+        cout<<"Weight: " << i << " = " << this->allNeurons[layer][number].getSpecificCurrentWeight(i)<<endl;
       }
     }
   }
@@ -512,7 +511,21 @@ void Network::printBias(){
   for(int layer = 0; layer < this->getNumberOfLayers(); layer++){
     for(int number = 0; number < this->getNeuronsInLayer(layer); number++){
       cout<<"Neuron ("<<layer<<","<<number<<")"<<endl;
-      cout<<"Bias: "<<this->allNeurons[layer][number].getBias()<<endl;
+      cout<<"Bias: "<<this->allNeurons[layer][number].getCurrentBias()<<endl;
+    }
+  }
+}
+
+void Network::update(){
+  for(int layer = 0; layer < this->getNumberOfLayers(); layer++){
+    for(int number = 0; number < this->getNeuronsInLayer(layer); number++){
+      this->allNeurons[layer][number].setPreviousWeights(this->allNeurons[layer][number].getCurrentWeights());
+
+      this->allNeurons[layer][number].setCurrentWeights(this->allNeurons[layer][number].getNextWeights());
+
+      this->allNeurons[layer][number].setPreviousBias(this->allNeurons[layer][number].getCurrentBias());
+
+      this->allNeurons[layer][number].setCurrentBias(this->allNeurons[layer][number].getNextBias());
     }
   }
 }
