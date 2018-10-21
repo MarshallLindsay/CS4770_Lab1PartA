@@ -16,11 +16,11 @@ Project Name: Lab1PartA
 
 #define LEARNING_RATE 0.7
 #define MOMENTUM_RATE 0.3
-#define INPUTS 3
-#define OUTPUTS 2
+
 
 using namespace std;
-
+int inputs = 0;
+int outputs = 0;
 vector<vector<double>> weightVector;
 vector<double> biasVector;
 vector<vector<double>> inputTrainingData;
@@ -31,18 +31,27 @@ void readWeights(string filename);
 void readBias(string filename);
 void readTrainingData(string filename);
 void printTrainingData();
+void printErrors();
+void printOutputs();
 
 int main(int argc, char **argv){
+  cout<<fixed;
+  cout<<setprecision(4);
+  inputs = atoi(argv[1]);
+  outputs = atoi(argv[2]);
+
   //Read the training data
   readTrainingData("cross_data.csv");
-
+  inputTrainingData.pop_back();
+  outputTrainingData.pop_back();
+  //printTrainingData();
   //Set up the network
-
   vector<int> layerInfo;
-  for(int i = 1; i < argc; i++){
-    //cout<<atoi(argv[i])<<endl;
+  for(int i = 3; i < argc; i++){
+    //cout<<argv[i]<<endl;
     layerInfo.push_back(atoi(argv[i]));
   }
+
   readWeights("w1.csv");
   weightVector.pop_back();
   readWeights("w2.csv");
@@ -51,19 +60,24 @@ int main(int argc, char **argv){
   biasVector.pop_back();
   readBias("b2.csv");
   biasVector.pop_back();
-
-
+  int userinput;
   Network net = Network(layerInfo, weightVector, biasVector, LEARNING_RATE, MOMENTUM_RATE);
   int count = 0;
   do{
+    cout<<"Training number : " << count<< endl;
     net.setInputs(inputTrainingData[count]);
     net.setOutputs(outputTrainingData[count]);
+    //printTrainingData();
     net.train();
+    net.update();
     count++;
-  }while(count < 315);
+    net.printOutputs();
+    net.printErrors();
+    net.printWeights();
+    net.printBias();
+  }while(count < 314);
 
-  net.printWeights();
-  net.printBias();
+
 
 
   return(0);
@@ -77,7 +91,7 @@ void readWeights(string filename){
 
     while(! weightFile.eof()){
       getline(weightFile, line);
-      //cout<<line<<endl;
+    //  cout<<line<<endl;
       stringstream check1(line);
       string intermediate;
       vector<double> weight;
@@ -112,26 +126,34 @@ void readBias(string filename){
 
 void readTrainingData(string filename){
   string line;
+  string::size_type sz;
   ifstream trainingFile (filename);
   if(trainingFile.is_open()){
 
     while(! trainingFile.eof()){
       getline(trainingFile, line);
+    //  cout<<line<<endl;
       stringstream check1(line);
+
       string intermediate;
-      vector<double> temp;
-      for(int i = 0; i < INPUTS; i++){
-        getline(check1, intermediate, ',');
-        temp.push_back(atof(intermediate.c_str()));
+      //Grab the inputs from the line
+      vector<double> tempVector;
+    //  cout<<inputs<<endl;
+      for(int i = 0; i < inputs; i++){
+        getline(check1,intermediate,',');
+      //  cout<<intermediate<<endl;
+        tempVector.push_back(atof(intermediate.c_str()));
       }
-      inputTrainingData.push_back(temp);
-      temp.clear();
-      for(int i = 0; i < OUTPUTS; i++){
+      inputTrainingData.push_back(tempVector);
+      //Grab the outputs from the line
+      tempVector.clear();
+      for(int i = 0; i < outputs; i++){
         getline(check1, intermediate, ',');
-        temp.push_back(atof(intermediate.c_str()));
+      //  cout<<intermediate<<endl;;
+        tempVector.push_back(atof(intermediate.c_str()));
       }
-      outputTrainingData.push_back(temp);
-      temp.clear();
+      outputTrainingData.push_back(tempVector);
+
     }
   }else{
     cout << "Could not open the file!" << endl;
@@ -144,16 +166,16 @@ void printTrainingData(){
 
   for(int i = 0; i < inputTrainingData.size(); i++){
     cout<<"Input data: (";
-    for(int j = 0; j < INPUTS; j++){
+    for(int j = 0; j < inputs; j++){
       cout<<inputTrainingData[i][j];
-      if(j < INPUTS - 1){
+      if(j < inputs - 1){
         cout<<",";
       }
     }
     cout<<")   Output data: (";
-    for(int j = 0; j < OUTPUTS; j++){
+    for(int j = 0; j < outputs; j++){
       cout<<outputTrainingData[i][j];
-      if(j < OUTPUTS - 1){
+      if(j < outputs - 1){
         cout<<",";
       }
     }
