@@ -125,10 +125,10 @@ private:
   vector<double> error;
   //What is the summed squared errors for the run?
   vector<double> sumSquaredError;
-  //How fast is the sumSquaredError changing?
-  double deltaSSE;
   //What is the MSE?
   double MSE;
+  //How much is the MSE changing
+  double deltaMSE;
   //How many layers are in the network?
   int numberOfLayers;
   //How many neurons are in each layer?
@@ -159,6 +159,7 @@ public:
   vector<RosenblattPerceptron> getLayerOfNeurons(int layer);
   vector<vector<RosenblattPerceptron>> getAllNeurons();
   double getMSE();
+  double getDeltaMSE();
 
   //Setters for all the members (I might need to change the variable names)
   void setInputs(vector<double> inputs);
@@ -168,6 +169,7 @@ public:
   void setNumberOfLayers(double numLayers);
   void setLayerInfo(vector<int> layerInfo);
   void setMSE(double value);
+  void setDeltaMSE(double value);
 
   //Functional methods
   void train();
@@ -179,6 +181,7 @@ public:
   void update();
   void printMSE();
   void calculateMSE();
+  void printOutputOutputs();
 };
 
 #endif // NEURONS_H_

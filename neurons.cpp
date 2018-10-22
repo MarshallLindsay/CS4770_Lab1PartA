@@ -272,7 +272,7 @@ void RosenblattPerceptron::calculateNextBias(){
 Network::Network(vector<int> layerInfo, vector<vector<double>> initialWeights, vector<double> biasVector, double learning, double momentum){
   this->setNumberOfLayers(layerInfo.size());
   this->setLayerInfo(layerInfo);
-  this->deltaSSE = 0.0;
+  this->deltaMSE = 0.0;
   //Set up the framework
   for(int layer = 0; layer < this->getNumberOfLayers(); layer++){
     vector<RosenblattPerceptron> tempLayerOfNeurons;
@@ -315,14 +315,11 @@ void Network::calculateError(){
 }
 
 void Network::calculateSumSquaredError(){
-
     //Summation
-
     double summation = 0;
     for(int i = 0; i < this->error.size(); i++){
         summation += pow((this->error[i]),2);
     }
-
     this->sumSquaredError.push_back(summation);
 }
 
@@ -378,6 +375,10 @@ double Network::getMSE(){
   return(this->MSE);
 }
 
+double Network::getDeltaMSE(){
+  return(this->deltaMSE);
+}
+
 //END GETTERS
 
 
@@ -408,6 +409,10 @@ void Network::setLayerInfo(vector<int> layerInfo){
 
 void Network::setMSE(double value){
   this->MSE = value;
+}
+
+void Network::setDeltaMSE(double value){
+  this->deltaMSE = value;
 }
 
 //End SETTERS
@@ -499,7 +504,33 @@ void Network::train(){
 }
 
 void Network::run(){
+  //Forward computation
+  vector<double> inputVector;
+  inputVector = this->getInputs();
 
+  for(int layer = 0; layer < this->getNumberOfLayers(); layer++){
+    //Calculate localField for the first layer
+    for(int number = 0; number < this->getNeuronsInLayer(layer); number++){
+      this->allNeurons[layer][number].calculateLocalField(inputVector);
+    }
+
+    //Calculate output of the first layer
+    for(int number = 0; number < this->getNeuronsInLayer(layer); number++){
+      this->allNeurons[layer][number].calculateCurrentOutput();
+    }
+
+    //Clear first.
+    inputVector.clear();
+    for(int i = 0; i < this->getNeuronsInLayer(layer); i++){
+      inputVector.push_back(this->allNeurons[layer][i].getCurrentOutput());
+    }
+  }
+  this->outputs.clear();
+  vector<double> tempVector;
+  for(int i = 0; i < this->getLayerInfo()[this->getNumberOfLayers()-1]; i++){
+    tempVector.push_back(this->allNeurons[this->getNumberOfLayers()-1][i].getCurrentOutput());
+  }
+  this->setOutputs(tempVector);
 }
 
 void Network::printWeights(){
@@ -563,8 +594,16 @@ void Network::calculateMSE(){
   for(int i = 0; i < this->sumSquaredError.size(); i++){
     summation += this->sumSquaredError[i];
   }
-
+  this->setDeltaMSE(this->getMSE() - (summation / (2*this->sumSquaredError.size())));
+  this->setDeltaMSE(abs(this->getDeltaMSE()));
   this->setMSE(summation / (2*this->sumSquaredError.size()));
 }
 
+void Network::printOutputOutputs(){
+  //cout<<this->getNumberOfLayers() - 1<<endl;
+  for(int number = 0; number < this->getNeuronsInLayer(this->getNumberOfLayers() -1); number++){
+    cout<<"Neuron ("<<this->getNumberOfLayers() -1<<","<<number<<")"<<endl;
+    cout<<"Output: "<<this->allNeurons[this->getNumberOfLayers()-1][number].getCurrentOutput()<<endl;
+  }
+}
 //End funtional METHODS

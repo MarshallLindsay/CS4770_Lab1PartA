@@ -15,10 +15,13 @@ Project Name: Lab1PartA
 #include <bits/stdc++.h>
 #include <ctime>
 #include <algorithm>
+#include <cstdlib>
 
 #define LEARNING_RATE 0.7
 #define MOMENTUM_RATE 0.3
+#define CONVERGENCE_VALUE 0.001
 
+#define MSE_FILENAME "mse.dat"
 
 using namespace std;
 int inputs = 0;
@@ -26,19 +29,25 @@ int outputs = 0;
 vector<vector<double>> weightVector;
 vector<double> biasVector;
 vector<vector<double>> trainingData;
+vector<vector<double>> testingData;
 vector<vector<double>> inputTrainingData;
 vector<vector<double>> outputTrainingData;
+vector<double> mseData;
 
 
 void readWeights(string filename);
 void readBias(string filename);
 void readTrainingData(string filename);
+void readTestData(string filename);
 void printTrainingData();
 void printNewTrainingData();
 void printErrors();
 void printOutputs();
 void shuffleData();
 void separateTrainingData();
+void save_mse();
+void printTestData();
+void saveTestResults(string filename, vector<double> inputData, vector<double> outputData);
 
 int main(int argc, char **argv){
   cout<<fixed;
@@ -78,14 +87,43 @@ do{
       //printTrainingData();
       net.train();
     }
-    //shuffleData();
-  }while(0);
+    net.calculateMSE();
+    mseData.push_back(net.getMSE());
+    cout<<"DeltaMSE: "<<net.getDeltaMSE()<<endl;
+    shuffleData();
+  }while(net.getDeltaMSE() > CONVERGENCE_VALUE);
   net.printWeights();
   net.printBias();
   net.printErrors();
-  net.calculateMSE();
   net.printMSE();
+  save_mse();
 
+  int run;
+  string outputfileName = "samplingOutputSave.dat";
+  cout<<"Would you like to run the neuralnet on some data?"<<endl;
+  cin >> run;
+  while(run){
+    //open the save file
+
+    //Get the test data
+    string filename;
+    cout<<"Please enter the filename for the test data"<<endl;
+    cin >>filename;
+
+    readTestData(filename);
+    testingData.pop_back();
+    //Run the network
+    //printTestData();
+    for(int i = 0; i < testingData.size(); i++){
+      net.setInputs(testingData[i]);
+      net.run();
+      saveTestResults(outputfileName,testingData[i],net.getOutputs());
+    }
+
+
+    cout<<"Would you like to run again"<<endl;
+    cin>>run;
+  }
 
   return(0);
 }
@@ -216,4 +254,80 @@ void separateTrainingData(){
     outputTrainingData.push_back(tempVector);
     tempVector.clear();
   }
+}
+
+void save_mse(){
+
+  ofstream outputFile;
+  outputFile.open (MSE_FILENAME);
+  for(int i = 0; i < mseData.size(); i++){
+    outputFile << i << " " << mseData[i] << endl;
+  }
+  outputFile.close();
+}
+
+
+void shuffleData(){
+
+  random_shuffle(trainingData.begin(), trainingData.end());
+}
+
+void readTestData(string filename){
+  string line;
+  string::size_type sz;
+  ifstream testingFile (filename);
+  if(testingFile.is_open()){
+    int count = 0;
+    while(! testingFile.eof()){
+      getline(testingFile, line);
+    //  cout<<line<<endl;
+      stringstream check1(line);
+
+      string intermediate;
+      //Grab the inputs from the line
+      vector<double> tempVector;
+      testingData.push_back(tempVector);
+    //  cout<<inputs<<endl;
+      for(int i = 0; i < inputs; i++){
+        getline(check1,intermediate,',');
+      //  cout<<intermediate<<endl;
+        testingData[count].push_back(atof(intermediate.c_str()));
+      }
+      tempVector.clear();
+      count++;
+    }
+  }else{
+    cout << "Could not open the file!" << endl;
+    exit(1);
+  }
+  testingFile.close();
+}
+
+void printTestData(){
+
+  for(int i = 0 ; i < testingData.size(); i++){
+    for(int j = 0; j < testingData[i].size(); j++){
+      cout<<testingData[i][j]<<" ";
+    }
+    cout<<endl;
+  }
+}
+
+void saveTestResults(string filename, vector<double> inputData, vector<double>outputData){
+  ofstream outputFile;
+  outputFile.open(filename, ios_base::app);
+  if(!outputFile.is_open()){
+    cout<<"Could not open the output file " << filename << endl;
+    exit(1);
+  }
+  double label;
+  if(outputData[0] > outputData[1]){
+    label = 0;
+  }else{
+    label = 1;
+  }
+
+  outputFile << inputData[0] << " " << inputData[1] << " " << label <<endl;
+
+  outputFile.close();
 }
