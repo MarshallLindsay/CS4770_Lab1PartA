@@ -17,11 +17,11 @@ Project Name: Lab1PartA
 #include <algorithm>
 #include <cstdlib>
 
-#define LEARNING_RATE 0.7
-#define MOMENTUM_RATE 0.3
-#define CONVERGENCE_VALUE 0.001
+#define LEARNING_RATE 0.01
+#define MOMENTUM_RATE 0.6
+#define CONVERGENCE_VALUE 0.0001
 
-#define MSE_FILENAME "mse.dat"
+#define MSE_FILENAME "mse_mom_0001_2.dat"
 
 using namespace std;
 int inputs = 0;
