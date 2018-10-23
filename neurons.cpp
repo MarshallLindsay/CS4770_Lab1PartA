@@ -313,6 +313,11 @@ Network::Network(vector<int> layerInfo, double learning, double momentum, int in
     }
     this->allNeurons.push_back(tempLayerOfNeurons);
   }
+  for(int i = 0; i < this->getNumberOfLayers(); i++){
+    for(int j = 0; j < this->getNeuronsInLayer(i); j++){
+      this->allNeurons[i][j].setLearningRate(learning);
+      this->allNeurons[i][j].setMomentumRate(momentum);
+    }
   this->numberOfInputs = inputs;
 }
 //Private METHODS
