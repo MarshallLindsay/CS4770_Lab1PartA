@@ -17,10 +17,10 @@ Project Name: Lab1PartA
 #include <algorithm>
 
 #define LEARNING_RATE 0.01
-#define MOMENTUM_RATE 0.6
+#define MOMENTUM_RATE 0.3
 #define CONVERGENCE_VALUE 0.001
 
-#define MSE_FILENAME "firstFiveFold_mse.dat"
+#define MSE_FILENAME "fifthFiveFold_8_mse.dat"
 
 using namespace std;
 int inputs = 0;
@@ -31,6 +31,8 @@ vector<vector<double>> trainingData;
 vector<vector<double>> testingData;
 vector<vector<double>> inputTrainingData;
 vector<vector<double>> outputTrainingData;
+vector<vector<double>> inputTestingData;
+vector<vector<double>> outputTestingData;
 vector<double> mseData;
 
 
@@ -44,10 +46,13 @@ void printErrors();
 void printOutputs();
 void shuffleData();
 void separateTrainingData();
+void separateTestingData();
 void save_mse();
 void printTestData();
 void fixOutputData();
+void fixTestingOutputData();
 void saveTestResults(string filename, vector<double> inputData, vector<double> outputData);
+void compareTestResults(string filename, vector<double> actualOutput, vector<double> predictedOutput);
 
 int main(int argc, char **argv){
   cout<<fixed;
@@ -65,7 +70,7 @@ int main(int argc, char **argv){
   Network net = Network(layerInfo, LEARNING_RATE, MOMENTUM_RATE, inputs);
   net.randomizeWeights();
 
-  string fileName = "firstTesting.dat";
+  string fileName = "fifthTesting.dat";
   readTrainingData(fileName);
   trainingData.pop_back();
 
@@ -105,12 +110,14 @@ int main(int argc, char **argv){
 
       readTestData(filename);
       testingData.pop_back();
+      separateTestingData();
+      fixTestingOutputData();
       //Run the network
       //printTestData();
       for(int i = 0; i < testingData.size(); i++){
-        net.setInputs(testingData[i]);
+        net.setInputs(inputTestingData[i]);
         net.run();
-        saveTestResults(outputfileName,testingData[i],net.getOutputs());
+        compareTestResults(outputfileName,outputTestingData[i],net.getOutputs());
       }
 
 
@@ -248,6 +255,24 @@ void separateTrainingData(){
   }
 }
 
+void separateTestingData(){
+  inputTestingData.clear();
+  outputTestingData.clear();
+  vector<double> tempVector;
+  for(int i = 0; i < testingData.size(); i++){
+    for(int number = 0; number < inputs; number++){
+      tempVector.push_back(testingData[i][number]);
+    }
+    inputTestingData.push_back(tempVector);
+    tempVector.clear();
+    for(int number = 0; number < outputs; number++){
+      tempVector.push_back(testingData[i][number+inputs]);
+    }
+    outputTestingData.push_back(tempVector);
+    tempVector.clear();
+  }
+}
+
 void save_mse(){
 
   ofstream outputFile;
@@ -286,6 +311,11 @@ void readTestData(string filename){
         testingData[count].push_back(atof(intermediate.c_str()));
       }
       tempVector.clear();
+      for(int i = 0; i < outputs; i++){
+        getline(check1, intermediate, ',');
+      //  cout<<intermediate<<endl;;
+        testingData[count].push_back(atof(intermediate.c_str()));
+      }
       count++;
     }
   }else{
@@ -333,6 +363,46 @@ void fixOutputData(){
     }else if(outputTrainingData[i][0] == 2){
       outputTrainingData[i][0] = 0;
       outputTrainingData[i][1] = 1;
+    }else{
+      cout<<"Error in fixOutputData"<<endl;
+    }
+  }
+}
+
+void compareTestResults(string filename, vector<double> actualOutput, vector<double> predictedOutput){
+  int actualLabel;
+  int predictedLabel;
+  ofstream outputFile;
+  outputFile.open(filename, ios_base::app);
+  if(!outputFile.is_open()){
+    cout<<"Could not open "<<filename<<endl;
+    exit(1);
+  }
+
+  if(predictedOutput[0] > predictedOutput[1]){
+    predictedLabel = 1;
+  }else{
+    predictedLabel = 2;
+  }
+  if(actualOutput[0] > actualOutput[1]){
+    actualLabel = 1;
+  }else{
+    actualLabel = 2;
+  }
+
+  outputFile<<predictedLabel<<","<<actualLabel<<endl;
+  outputFile.close();
+}
+
+void fixTestingOutputData(){
+  //cout<<outputTrainingData[0].size()<<endl;
+  for(int i = 0; i < outputTestingData.size(); i++){
+    if(outputTestingData[i][0] == 1){
+      outputTestingData[i][0] = 1;
+      outputTestingData[i][1] = 0;
+    }else if(outputTestingData[i][0] == 2){
+      outputTestingData[i][0] = 0;
+      outputTestingData[i][1] = 1;
     }else{
       cout<<"Error in fixOutputData"<<endl;
     }
