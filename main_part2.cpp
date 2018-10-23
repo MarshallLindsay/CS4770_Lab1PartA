@@ -18,9 +18,9 @@ Project Name: Lab1PartA
 
 #define LEARNING_RATE 0.01
 #define MOMENTUM_RATE 0.6
-#define CONVERGENCE_VALUE 0.0001
+#define CONVERGENCE_VALUE 0.001
 
-#define MSE_FILENAME "firstFiveFold.dat"
+#define MSE_FILENAME "firstFiveFold_mse.dat"
 
 using namespace std;
 int inputs = 0;
@@ -87,6 +87,38 @@ int main(int argc, char **argv){
 
     net.printMSE();
     save_mse();
+
+    int run;
+
+    cout<<"Would you like to run the neuralnet on some data?"<<endl;
+    cin >> run;
+    while(run){
+      //open the save file
+      string outputfileName;
+      cout<<"Testing data save file name: "<<endl;
+      cin>>outputfileName;
+
+      //Get the test data
+      string filename;
+      cout<<"Please enter the filename for the test data"<<endl;
+      cin >>filename;
+
+      readTestData(filename);
+      testingData.pop_back();
+      //Run the network
+      //printTestData();
+      for(int i = 0; i < testingData.size(); i++){
+        net.setInputs(testingData[i]);
+        net.run();
+        saveTestResults(outputfileName,testingData[i],net.getOutputs());
+      }
+
+
+      cout<<"Would you like to run again"<<endl;
+      cin>>run;
+    }
+
+    return(0);
 }
 
 void readWeights(string filename){
