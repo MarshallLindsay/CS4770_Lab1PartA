@@ -305,6 +305,7 @@ Network::Network(vector<int> layerInfo, double learning, double momentum, int in
   this->setNumberOfLayers(layerInfo.size());
   this->setLayerInfo(layerInfo);
   this->deltaMSE = 0.0;
+
   //Set up the framework
   for(int layer = 0; layer < this->getNumberOfLayers(); layer++){
     vector<RosenblattPerceptron> tempLayerOfNeurons;
@@ -319,6 +320,7 @@ Network::Network(vector<int> layerInfo, double learning, double momentum, int in
       this->allNeurons[i][j].setMomentumRate(momentum);
     }
   this->numberOfInputs = inputs;
+  }
 }
 //Private METHODS
 void Network::addNeuron(RosenblattPerceptron neuron){
@@ -661,6 +663,42 @@ void Network::printOutputOutputs(){
   for(int number = 0; number < this->getNeuronsInLayer(this->getNumberOfLayers() -1); number++){
     cout<<"Neuron ("<<this->getNumberOfLayers() -1<<","<<number<<")"<<endl;
     cout<<"Output: "<<this->allNeurons[this->getNumberOfLayers()-1][number].getCurrentOutput()<<endl;
+  }
+}
+
+void Network::randomizeWeights(){
+  srand(time(NULL));
+  vector<double> randomWeights;
+
+  double value;
+  for(int layer = 0; layer < this->getNumberOfLayers(); layer++){
+    for(int number = 0; number < this->getNeuronsInLayer(layer); number++){
+      double value = (double)(((double)(rand() % 4000) - 2000) / 1000);
+      this->allNeurons[layer][number].setCurrentBias(value);
+      this->allNeurons[layer][number].setPreviousBias(value);
+      this->allNeurons[layer][number].setNextBias(value);
+
+
+      if(layer == 0){
+        for(int i = 0; i < this->numberOfInputs; i++){
+          value = (double)(((double)(rand() % 4000) - 2000) / 1000);
+          randomWeights.push_back(value);
+        }
+        this->allNeurons[layer][number].setCurrentWeights(randomWeights);
+        this->allNeurons[layer][number].setPreviousWeights(randomWeights);
+        this->allNeurons[layer][number].setNextWeights(randomWeights);
+        randomWeights.clear();
+      }else{
+        for(int i = 0; i < this->getNeuronsInLayer(layer-1); i++){
+          value = (double)(((double)(rand() % 4000) - 2000) / 1000);
+          randomWeights.push_back(value);
+        }
+        this->allNeurons[layer][number].setCurrentWeights(randomWeights);
+        this->allNeurons[layer][number].setPreviousWeights(randomWeights);
+        this->allNeurons[layer][number].setNextWeights(randomWeights);
+        randomWeights.clear();
+      }
+    }
   }
 }
 //End funtional METHODS

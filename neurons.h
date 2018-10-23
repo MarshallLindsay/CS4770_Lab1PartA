@@ -148,6 +148,7 @@ public:
   //How do we initialize/construct a network?
   Network(vector<int> layerInfo, vector<vector<double>> initialWeights, vector<double> biasVector, double learning, double momentum);
   Network(vector<int> layerInfo, double learning, double momentum, int inputs);
+
   //How do we destruct a network?
   ~Network();
 
@@ -187,6 +188,7 @@ public:
   void printMSE();
   void calculateMSE();
   void printOutputOutputs();
+  void randomizeWeights();
 };
 
 #endif // NEURONS_H_

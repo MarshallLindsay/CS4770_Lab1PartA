@@ -15,13 +15,12 @@ Project Name: Lab1PartA
 #include <bits/stdc++.h>
 #include <ctime>
 #include <algorithm>
-#include <cstdlib>
 
-#define LEARNING_RATE 0.7
+#define LEARNING_RATE 0.01
 #define MOMENTUM_RATE 0.3
 #define CONVERGENCE_VALUE 0.001
 
-#define MSE_FILENAME "firstFiveFold.dat"
+#define MSE_FILENAME "fifthFiveFold_8_mse.dat"
 
 using namespace std;
 int inputs = 0;
@@ -30,12 +29,10 @@ vector<vector<double>> weightVector;
 vector<double> biasVector;
 vector<vector<double>> trainingData;
 vector<vector<double>> testingData;
-vector<vector<double>> inputTestingData;
-vector<vector<double>> outputTestingData;
 vector<vector<double>> inputTrainingData;
 vector<vector<double>> outputTrainingData;
-vector<vector<<double>> inputTestingData;
-vector<vector<<double>> outputTestingData;
+vector<vector<double>> inputTestingData;
+vector<vector<double>> outputTestingData;
 vector<double> mseData;
 
 
@@ -53,8 +50,8 @@ void separateTestingData();
 void save_mse();
 void printTestData();
 void fixOutputData();
+void fixTestingOutputData();
 void saveTestResults(string filename, vector<double> inputData, vector<double> outputData);
-void separateTestingData();
 void compareTestResults(string filename, vector<double> actualOutput, vector<double> predictedOutput);
 
 int main(int argc, char **argv){
@@ -62,86 +59,74 @@ int main(int argc, char **argv){
   cout<<setprecision(4);
   inputs = atoi(argv[1]);
   outputs = atoi(argv[2]);
+  //cout<<inputs<<endl;
+  //cout<<outputs<<endl;
 
-  //Read the training data
-  readTrainingData("firstTesting.dat");
-  trainingData.pop_back();
-
-  //Set up the network
   vector<int> layerInfo;
-  for(int i = 3; i < argc; i++){
-    //cout<<argv[i]<<endl;
+  for(int i = 3 ; i < argc; i ++){
     layerInfo.push_back(atoi(argv[i]));
   }
 
-  int userinput;
   Network net = Network(layerInfo, LEARNING_RATE, MOMENTUM_RATE, inputs);
   net.randomizeWeights();
-  int count = 0;
 
-do{
-    separateTrainingData();
-    fixOutputData();
-    //train for an epoc
-    for(int number = 0; number < trainingData.size(); number++){
-    //  cout<<number<<endl;
-      net.setInputs(inputTrainingData[number]);
-      net.setOutputs(outputTrainingData[number]);
-      //printTrainingData();
-      //net.printWeights();
-      net.train();
-      //net.printWeights();
+  string fileName = "fifthTesting.dat";
+  readTrainingData(fileName);
+  trainingData.pop_back();
 
-      //cin >> run;
+  do{
+      separateTrainingData();
+      fixOutputData();
+      //train for an epoc
+      for(int number = 0; number < trainingData.size(); number++){
+        net.setInputs(inputTrainingData[number]);
+        net.setOutputs(outputTrainingData[number]);
+        //printTrainingData();
+        net.train();
+      }
+      net.calculateMSE();
+      mseData.push_back(net.getMSE());
+      cout<<"DeltaMSE: "<<net.getDeltaMSE()<<endl;
+      shuffleData();
+    }while(net.getDeltaMSE() > CONVERGENCE_VALUE);
+
+    net.printMSE();
+    save_mse();
+
+    int run;
+
+    cout<<"Would you like to run the neuralnet on some data?"<<endl;
+    cin >> run;
+    while(run){
+      //open the save file
+      string outputfileName;
+      cout<<"Testing data save file name: "<<endl;
+      cin>>outputfileName;
+
+      //Get the test data
+      string filename;
+      cout<<"Please enter the filename for the test data"<<endl;
+      cin >>filename;
+
+      readTestData(filename);
+      testingData.pop_back();
+      separateTestingData();
+      fixTestingOutputData();
+      //Run the network
+      //printTestData();
+      for(int i = 0; i < testingData.size(); i++){
+        net.setInputs(inputTestingData[i]);
+        net.run();
+        compareTestResults(outputfileName,outputTestingData[i],net.getOutputs());
+      }
+
+
+      cout<<"Would you like to run again"<<endl;
+      cin>>run;
     }
-    net.printOutputs();
-    net.calculateMSE();
-    mseData.push_back(net.getMSE());
-    cout<<"MSE: "<<net.getMSE()<<endl;
-    shuffleData();
-  }while(net.getDeltaMSE() > CONVERGENCE_VALUE);
-  // net.printWeights();
-  // net.printBias();
-  // net.printErrors();
-  net.printMSE();
-  save_mse();
 
-  int run;
-  cout<<"Would you like to run the neuralnet on some data?"<<endl;
-  cin >> run;
-  cout<<"What filename to save test results?"<<endl;
-  cin>>outputfileName;
-  while(run){
-    //open the save file
-    string outputfileName;
-    cout<<"Enter the name for the gaussian save file"<<endl;
-    cin>>outputfileName;
-    //Get the test data
-    string filename;
-    cout<<"Please enter the filename for the test data"<<endl;
-    cin >>filename;
-
-    readTestData(filename);
-    testingData.pop_back();
-    separateTestingData();
-    //Run the network
-    //printTestData();
-    for(int i = 0; i < testingData.size(); i++){
-      net.setInputs(inputTestingData[i]);
-      net.setOutputs(outputTestingData[i]);
-      net.run();
-
-      compareTestResults(outputfileName,testingData[i],net.getOutputs());
-    }
-
-
-    cout<<"Would you like to run again"<<endl;
-    cin>>run;
-  }
-
-  return(0);
+    return(0);
 }
-
 
 void readWeights(string filename){
   string line;
@@ -206,22 +191,10 @@ void readTrainingData(string filename){
       }
       //Grab the outputs from the line
       tempVector.clear();
-      for(int i = 0; i < 1; i++){ //adjusted for gaussian
+      for(int i = 0; i < outputs; i++){
         getline(check1, intermediate, ',');
-        //cout<<intermediate<<endl;;
-        //adjustment for the gaussian part
-      //  cout<<intermediate<<endl;
-      //  cout<<atof(intermediate.c_str())<<endl;
-        if(atof(intermediate.c_str()) == 1){
-          trainingData[count].push_back(1);
-          trainingData[count].push_back(0);
-        }else if(atof(intermediate.c_str()) == 2){
-          trainingData[count].push_back(0);
-          trainingData[count].push_back(1);
-        }else{
-
-        }
-        //trainingData[count].push_back(atof(intermediate.c_str()));
+      //  cout<<intermediate<<endl;;
+        trainingData[count].push_back(atof(intermediate.c_str()));
       }
       count++;
     }
@@ -281,6 +254,7 @@ void separateTrainingData(){
     tempVector.clear();
   }
 }
+
 void separateTestingData(){
   inputTestingData.clear();
   outputTestingData.clear();
@@ -349,7 +323,6 @@ void readTestData(string filename){
     exit(1);
   }
   testingFile.close();
-
 }
 
 void printTestData(){
@@ -381,6 +354,21 @@ void saveTestResults(string filename, vector<double> inputData, vector<double>ou
   outputFile.close();
 }
 
+void fixOutputData(){
+  //cout<<outputTrainingData[0].size()<<endl;
+  for(int i = 0; i < outputTrainingData.size(); i++){
+    if(outputTrainingData[i][0] == 1){
+      outputTrainingData[i][0] = 1;
+      outputTrainingData[i][1] = 0;
+    }else if(outputTrainingData[i][0] == 2){
+      outputTrainingData[i][0] = 0;
+      outputTrainingData[i][1] = 1;
+    }else{
+      cout<<"Error in fixOutputData"<<endl;
+    }
+  }
+}
+
 void compareTestResults(string filename, vector<double> actualOutput, vector<double> predictedOutput){
   int actualLabel;
   int predictedLabel;
@@ -404,4 +392,19 @@ void compareTestResults(string filename, vector<double> actualOutput, vector<dou
 
   outputFile<<predictedLabel<<","<<actualLabel<<endl;
   outputFile.close();
+}
+
+void fixTestingOutputData(){
+  //cout<<outputTrainingData[0].size()<<endl;
+  for(int i = 0; i < outputTestingData.size(); i++){
+    if(outputTestingData[i][0] == 1){
+      outputTestingData[i][0] = 1;
+      outputTestingData[i][1] = 0;
+    }else if(outputTestingData[i][0] == 2){
+      outputTestingData[i][0] = 0;
+      outputTestingData[i][1] = 1;
+    }else{
+      cout<<"Error in fixOutputData"<<endl;
+    }
+  }
 }
