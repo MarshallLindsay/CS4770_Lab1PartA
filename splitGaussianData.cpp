@@ -12,40 +12,26 @@ void readData(string filename);
 void printData(vector<vector<double> > data);
 void splitData(string firstClassFileName, string secondClassFileName);
 void saveData(string filename, vector<vector<double>> data);
+void fiveFoldSplit();
 
 vector<vector<double> > inputData;
 vector<vector<double>> classOneInputData;
 vector<vector<double>> classTwoInputData;
 
 int main(int argc, char** argv){
-
   string class1file = "gausclass1.dat";
   string class2file = "gausclass2.dat";
-  string firsttwenty = "firsttraining.dat";
-  string secondtwenty = "secondTraining.dat";
-  string thirdtwenty = "thirdTraining.dat";
-  string fourthtwenty = "fourthTraining.dat";
-  string fithtwenty = "fithTraining.dat";
-  string firsttraining = "firstTesting.dat";
-  string secondtraining = "secondTesting.dat";
-  string thirdtraining = "thirdTesting.dat";
-  string fourthtraining = "fourthTesting.dat";
-  string fifthtraining = "fifthTestin.dat";
-
   string inputFile = "Two_Class_FourDGaussians500.txt";
 
   readData(inputFile);
-  printData(inputData);
+  //printData(inputData);
   splitData(class1file, class2file);
-  printData(classTwoInputData);
-  printData(classOneInputData);
+  //printData(classTwoInputData);
+  //printData(classOneInputData);
   saveData(class1file, classOneInputData);
   saveData(class2file, classTwoInputData);
 
-
-
-
-
+  fiveFoldSplit();
 
 }
 
@@ -150,6 +136,303 @@ void saveTestResults(string filename, vector<double> inputData, vector<double>ou
   outputFile.close();
 }
 
+void fiveFoldSplit(){
+  string firstTesting = "firstTesting.dat";
+  string secondTesting = "secondTesting.dat";
+  string thirdTesting = "thirdTesting.dat";
+  string fourthTesting = "fourthTesting.dat";
+  string fithTesting = "fithTesting.dat";
+  string firstTraining = "firstTraining.dat";
+  string secondTraining = "secondTraining.dat";
+  string thirdTraining = "thirdTraining.dat";
+  string fourthTraining = "fourthTraining.dat";
+  string fifthTraining = "fifthTraining.dat";
+  ofstream outputFile;
+  vector<string> filenames = {firstTesting,firstTraining,secondTesting,secondTraining,thirdTesting,thirdTraining,fourthTesting,fourthTraining,fithTesting,fifthTraining};
+
+  vector<vector<double>> trainingData;
+  vector<vector<double>> testingData;
+  //cout<<classOneInputData.size() *(double(1)/double(5))<<endl;
+  for(double i = 0; i < classOneInputData.size() *(double(1)/double(5))-1; i++){
+    trainingData.push_back(classOneInputData[i]);
+  }
+  for(double i = 0; i < classTwoInputData.size() *(double(1)/double(5))-1; i++){
+    trainingData.push_back(classTwoInputData[i]);
+  }
+  for(double i = classOneInputData.size() *(double(1)/double(5)); i < classOneInputData.size(); i++){
+    testingData.push_back(classOneInputData[i]);
+  }
+  for(double i = classTwoInputData.size() *(double(1)/double(5)); i < classTwoInputData.size(); i++){
+    testingData.push_back(classTwoInputData[i]);
+  }
+
+  outputFile.open(filenames[0], ios_base::out);
+  if(!outputFile.is_open()){
+    cout<<"Could not open the file : "<<filenames[1]<<endl;
+    exit(1);
+  }
+
+  for(int i = 0; i < testingData.size(); i++){
+    for(int k = 0; k < testingData[i].size(); k++){
+      outputFile<<testingData[i][k];
+      if(k < testingData[i].size() -1){
+        outputFile<<",";
+      }
+    }
+    outputFile<<endl;
+  }
+  outputFile.close();
+
+  outputFile.open(filenames[1], ios_base::out );
+  if(!outputFile.is_open()){
+    cout<<"Could not open the file : "<<filenames[2]<<endl;
+    exit(1);
+  }
+
+  for(int i = 0; i < trainingData.size(); i++){
+    for(int k = 0; k < trainingData[i].size(); k++){
+      outputFile<<trainingData[i][k];
+      if(k < trainingData[i].size() -1){
+        outputFile<<",";
+      }
+    }
+    outputFile<<endl;
+  }
+  outputFile.close();
+  trainingData.clear();
+  testingData.clear();
+////////////////////////////////////////////////////////////////////////////////
+  for(double i = classOneInputData.size() *(double(1)/double(5)); i < classOneInputData.size() *(double(2)/double(5))-1; i++){
+    trainingData.push_back(classOneInputData[i]);
+  }
+  for(double i = classTwoInputData.size() *(double(1)/double(5)); i < classTwoInputData.size() *(double(2)/double(5))-1; i++){
+    trainingData.push_back(classTwoInputData[i]);
+  }
+
+  for(double i = 0; i < classOneInputData.size() *(double(1)/double(5)) -1; i++){
+    testingData.push_back(classOneInputData[i]);
+  }
+  for(double i = classOneInputData.size() *(double(2)/double(5)); i < classTwoInputData.size(); i++){
+    testingData.push_back(classOneInputData[i]);
+  }
+
+  for(double i = 0; i < classTwoInputData.size() *(double(1)/double(5)) -1; i++){
+    testingData.push_back(classTwoInputData[i]);
+  }
+  for(double i = classTwoInputData.size() *(double(2)/double(5)); i < classTwoInputData.size(); i++){
+    testingData.push_back(classTwoInputData[i]);
+  }
+
+  outputFile.open(filenames[2], ios_base::out);
+  if(!outputFile.is_open()){
+    cout<<"Could not open the file : "<<filenames[2]<<endl;
+    exit(1);
+  }
+
+  for(int i = 0; i < testingData.size(); i++){
+    for(int k = 0; k < testingData[i].size(); k++){
+      outputFile<<testingData[i][k];
+      if(k < testingData[i].size() -1){
+        outputFile<<",";
+      }
+    }
+    outputFile<<endl;
+  }
+  outputFile.close();
+
+  outputFile.open(filenames[3], ios_base::out );
+  if(!outputFile.is_open()){
+    cout<<"Could not open the file : "<<filenames[3]<<endl;
+    exit(1);
+  }
+
+  for(int i = 0; i < trainingData.size(); i++){
+    for(int k = 0; k < trainingData[i].size(); k++){
+      outputFile<<trainingData[i][k];
+      if(k < trainingData[i].size() -1){
+        outputFile<<",";
+      }
+    }
+    outputFile<<endl;
+  }
+  outputFile.close();
+  trainingData.clear();
+  testingData.clear();
+
+  ////////////////////////////////////////////////////////////////////////////////
+    for(double i = classOneInputData.size() *(double(2)/double(5)); i < classOneInputData.size() *(double(3)/double(5))-1; i++){
+      trainingData.push_back(classOneInputData[i]);
+    }
+    for(double i = classTwoInputData.size() *(double(2)/double(5)); i < classTwoInputData.size() *(double(3)/double(5))-1; i++){
+      trainingData.push_back(classTwoInputData[i]);
+    }
+
+    for(double i = 0; i < classOneInputData.size() *(double(2)/double(5)) -1; i++){
+      testingData.push_back(classOneInputData[i]);
+    }
+    for(double i = classOneInputData.size() *(double(3)/double(5)); i < classTwoInputData.size(); i++){
+      testingData.push_back(classOneInputData[i]);
+    }
+
+    for(double i = 0; i < classTwoInputData.size() *(double(2)/double(5)) -1; i++){
+      testingData.push_back(classTwoInputData[i]);
+    }
+    for(double i = classTwoInputData.size() *(double(3)/double(5)); i < classTwoInputData.size(); i++){
+      testingData.push_back(classTwoInputData[i]);
+    }
+
+    outputFile.open(filenames[4], ios_base::out);
+    if(!outputFile.is_open()){
+      cout<<"Could not open the file : "<<filenames[4]<<endl;
+      exit(1);
+    }
+
+    for(int i = 0; i < testingData.size(); i++){
+      for(int k = 0; k < testingData[i].size(); k++){
+        outputFile<<testingData[i][k];
+        if(k < testingData[i].size() -1){
+          outputFile<<",";
+        }
+      }
+      outputFile<<endl;
+    }
+    outputFile.close();
+
+    outputFile.open(filenames[5], ios_base::out );
+    if(!outputFile.is_open()){
+      cout<<"Could not open the file : "<<filenames[5]<<endl;
+      exit(1);
+    }
+
+    for(int i = 0; i < trainingData.size(); i++){
+      for(int k = 0; k < trainingData[i].size(); k++){
+        outputFile<<trainingData[i][k];
+        if(k < trainingData[i].size() -1){
+          outputFile<<",";
+        }
+      }
+      outputFile<<endl;
+    }
+    outputFile.close();
+    trainingData.clear();
+    testingData.clear();
+
+    ////////////////////////////////////////////////////////////////////////////////
+      for(double i = classOneInputData.size() *(double(3)/double(5)); i < classOneInputData.size() *(double(4)/double(5))-1; i++){
+        trainingData.push_back(classOneInputData[i]);
+      }
+      for(double i = classTwoInputData.size() *(double(3)/double(5)); i < classTwoInputData.size() *(double(4)/double(5))-1; i++){
+        trainingData.push_back(classTwoInputData[i]);
+      }
+
+      for(double i = 0; i < classOneInputData.size() *(double(3)/double(5)) -1; i++){
+        testingData.push_back(classOneInputData[i]);
+      }
+      for(double i = classOneInputData.size() *(double(4)/double(5)); i < classTwoInputData.size(); i++){
+        testingData.push_back(classOneInputData[i]);
+      }
+
+      for(double i = 0; i < classTwoInputData.size() *(double(3)/double(5)) -1; i++){
+        testingData.push_back(classTwoInputData[i]);
+      }
+      for(double i = classTwoInputData.size() *(double(4)/double(5)); i < classTwoInputData.size(); i++){
+        testingData.push_back(classTwoInputData[i]);
+      }
+
+      outputFile.open(filenames[6], ios_base::out);
+      if(!outputFile.is_open()){
+        cout<<"Could not open the file : "<<filenames[6]<<endl;
+        exit(1);
+      }
+
+      for(int i = 0; i < testingData.size(); i++){
+        for(int k = 0; k < testingData[i].size(); k++){
+          outputFile<<testingData[i][k];
+          if(k < testingData[i].size() -1){
+            outputFile<<",";
+          }
+        }
+        outputFile<<endl;
+      }
+      outputFile.close();
+
+      outputFile.open(filenames[7], ios_base::out );
+      if(!outputFile.is_open()){
+        cout<<"Could not open the file : "<<filenames[7]<<endl;
+        exit(1);
+      }
+
+      for(int i = 0; i < trainingData.size(); i++){
+        for(int k = 0; k < trainingData[i].size(); k++){
+          outputFile<<trainingData[i][k];
+          if(k < trainingData[i].size() -1){
+            outputFile<<",";
+          }
+        }
+        outputFile<<endl;
+      }
+      outputFile.close();
+      trainingData.clear();
+      testingData.clear();
+    ////////////////////////////////////////////////////////////////////////////////
+      for(double i = classOneInputData.size() *(double(4)/double(5)); i < classOneInputData.size() *(double(5)/double(5))-1; i++){
+        trainingData.push_back(classOneInputData[i]);
+      }
+      for(double i = classTwoInputData.size() *(double(4)/double(5)); i < classTwoInputData.size() *(double(5)/double(5))-1; i++){
+        trainingData.push_back(classTwoInputData[i]);
+      }
+
+      for(double i = 0; i < classOneInputData.size() *(double(4)/double(5)) -1; i++){
+        testingData.push_back(classOneInputData[i]);
+      }
+      for(double i = classOneInputData.size() *(double(5)/double(5)); i < classTwoInputData.size(); i++){
+        testingData.push_back(classOneInputData[i]);
+      }
+
+      for(double i = 0; i < classTwoInputData.size() *(double(4)/double(5)) -1; i++){
+        testingData.push_back(classTwoInputData[i]);
+      }
+      for(double i = classTwoInputData.size() *(double(5)/double(5)); i < classTwoInputData.size(); i++){
+        testingData.push_back(classTwoInputData[i]);
+      }
+
+      outputFile.open(filenames[8], ios_base::out);
+      if(!outputFile.is_open()){
+        cout<<"Could not open the file : "<<filenames[8]<<endl;
+        exit(1);
+      }
+
+      for(int i = 0; i < testingData.size(); i++){
+        for(int k = 0; k < testingData[i].size(); k++){
+          outputFile<<testingData[i][k];
+          if(k < testingData[i].size() -1){
+            outputFile<<",";
+          }
+        }
+        outputFile<<endl;
+      }
+      outputFile.close();
+
+      outputFile.open(filenames[9], ios_base::out );
+      if(!outputFile.is_open()){
+        cout<<"Could not open the file : "<<filenames[9]<<endl;
+        exit(1);
+      }
+
+      for(int i = 0; i < trainingData.size(); i++){
+        for(int k = 0; k < trainingData[i].size(); k++){
+          outputFile<<trainingData[i][k];
+          if(k < trainingData[i].size() -1){
+            outputFile<<",";
+          }
+        }
+        outputFile<<endl;
+      }
+      outputFile.close();
+      trainingData.clear();
+      testingData.clear();
+
+}
 /*
 void readWeights(string filename){
   string line;
