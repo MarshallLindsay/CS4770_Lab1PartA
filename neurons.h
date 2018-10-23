@@ -15,6 +15,7 @@ Project Name: Lab1PartA
 #include <stdlib.h>
 #include <vector>
 #include <math.h>
+#include <time.h>
 
 using namespace std;
 /*
@@ -133,6 +134,8 @@ private:
   int numberOfLayers;
   //How many neurons are in each layer?
   vector<int> layerInfo;
+
+  int numberOfInputs;
   //What neurons?
   vector<vector<RosenblattPerceptron>> allNeurons;
 
@@ -144,6 +147,8 @@ private:
 public:
   //How do we initialize/construct a network?
   Network(vector<int> layerInfo, vector<vector<double>> initialWeights, vector<double> biasVector, double learning, double momentum);
+  Network(vector<int> layerInfo, double learning, double momentum, int inputs);
+
   //How do we destruct a network?
   ~Network();
 
@@ -182,6 +187,7 @@ public:
   void printMSE();
   void calculateMSE();
   void printOutputOutputs();
+  void randomizeWeights();
 };
 
 #endif // NEURONS_H_

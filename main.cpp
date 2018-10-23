@@ -21,7 +21,7 @@ Project Name: Lab1PartA
 #define MOMENTUM_RATE 0.6
 #define CONVERGENCE_VALUE 0.0001
 
-#define MSE_FILENAME "mse_mom_0001_2.dat"
+#define MSE_FILENAME "firstFiveFold.dat"
 
 using namespace std;
 int inputs = 0;
@@ -56,7 +56,7 @@ int main(int argc, char **argv){
   outputs = atoi(argv[2]);
 
   //Read the training data
-  readTrainingData("cross_data.csv");
+  readTrainingData("secondTesting.dat");
   trainingData.pop_back();
 
   //Set up the network
@@ -66,16 +66,9 @@ int main(int argc, char **argv){
     layerInfo.push_back(atoi(argv[i]));
   }
 
-  readWeights("w1.csv");
-  weightVector.pop_back();
-  readWeights("w2.csv");
-  weightVector.pop_back();
-  readBias("b1.csv");
-  biasVector.pop_back();
-  readBias("b2.csv");
-  biasVector.pop_back();
   int userinput;
-  Network net = Network(layerInfo, weightVector, biasVector, LEARNING_RATE, MOMENTUM_RATE);
+  Network net = Network(layerInfo, LEARNING_RATE, MOMENTUM_RATE, inputs);
+  net.randomizeWeights();
   int count = 0;
 
 do{
@@ -91,7 +84,7 @@ do{
     mseData.push_back(net.getMSE());
     cout<<"DeltaMSE: "<<net.getDeltaMSE()<<endl;
     shuffleData();
-  }while(net.getDeltaMSE() > CONVERGENCE_VALUE);
+  }while(1);
   net.printWeights();
   net.printBias();
   net.printErrors();
