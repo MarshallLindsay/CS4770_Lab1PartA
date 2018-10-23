@@ -49,6 +49,7 @@ void shuffleData();
 void separateTrainingData();
 void save_mse();
 void printTestData();
+void fixOutputData();
 void saveTestResults(string filename, vector<double> inputData, vector<double> outputData);
 void separateTestingData();
 void compareTestResults(string filename, vector<double> actualOutput, vector<double> predictedOutput);
@@ -77,6 +78,7 @@ int main(int argc, char **argv){
 
 do{
     separateTrainingData();
+    fixOutputData();
     //train for an epoc
     for(int number = 0; number < trainingData.size(); number++){
     //  cout<<number<<endl;
@@ -408,4 +410,19 @@ void compareTestResults(string filename, vector<double> actualOutput, vector<dou
 
   outputFile<<predictedLabel<<","<<actualLabel<<endl;
   outputFile.close();
+}
+
+void fixOutputData(){
+  //cout<<outputTrainingData[0].size()<<endl;
+  for(int i = 0; i < outputTrainingData.size(); i++){
+    if(outputTrainingData[i][0] == 1){
+      outputTrainingData[i][0] = 1;
+      outputTrainingData[i][1] = 0;
+    }else if(outputTrainingData[i][0] == 2){
+      outputTrainingData[i][0] = 0;
+      outputTrainingData[i][1] = 1;
+    }else{
+      cout<<"Error in fixOutputData"<<endl;
+    }
+  }
 }
