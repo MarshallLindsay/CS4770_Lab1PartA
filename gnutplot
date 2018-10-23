@@ -1,0 +1,24 @@
+set title "MSE per EPOC With Convergence at 0.001"
+set title "MSE per EPOC With Convergence at 0.0001"
+set yrange [0:.3]
+set xlabel "EPOC"
+set ylabel "MSE"
+
+plot "mse_001_2.dat" with lines lw 3 title columnheader(1), \
+     "mse_001_3.dat" with lines lw 3 title columnheader(1), \
+     "mse_001_1.dat" with lines lw 3 title columnheader(1), \
+     "mse_001_4.dat" with lines lw 3 title columnheader(1)
+
+
+plot  "mse_001_1.dat" with lines lw 3 title columnheader(1)
+plot  "mse_0001_1.dat" with lines lw 3 title columnheader(1)
+
+
+plot  "mse_001_2.dat" with lines lw 3 title columnheader(1)
+plot  "mse_0001_2.dat" with lines lw 3 title columnheader(1)
+
+plot  "mse_001_3.dat" with lines lw 3 title columnheader(1)
+plot  "mse_0001_3.dat" with lines lw 3 title columnheader(1)
+
+plot  "mse_001_4.dat" with lines lw 3 title columnheader(1)
+plot  "mse_0001_4.dat" with lines lw 3 title columnheader(1)
