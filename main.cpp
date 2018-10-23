@@ -19,7 +19,7 @@ Project Name: Lab1PartA
 
 #define LEARNING_RATE 0.7
 #define MOMENTUM_RATE 0.3
-#define CONVERGENCE_VALUE 0.0001
+#define CONVERGENCE_VALUE 0.001
 
 #define MSE_FILENAME "fiveFold1_MSE.dat"
 
@@ -60,7 +60,8 @@ int main(int argc, char **argv){
   outputs = atoi(argv[2]);
 
   //Read the training data
-
+  readTrainingData("firstTesting.dat");
+  trainingData.pop_back();
 
   //Set up the network
   vector<int> layerInfo;
@@ -70,35 +71,30 @@ int main(int argc, char **argv){
   }
 
   int userinput;
-
+  Network net = Network(layerInfo, LEARNING_RATE, MOMENTUM_RATE, inputs);
+  net.randomizeWeights();
   int count = 0;
-  int train = 0;
-  string trainingDataFileName;
-  cout<<"Would you like to train the neuralnet on some data?"<<endl;
-  cin >> train;
-  while(train){
-    Network net = Network(layerInfo, LEARNING_RATE, MOMENTUM_RATE, inputs);
-    cout<<"What filename for the training data"<<endl;
-    cin>>trainingDataFileName;
-    net.randomizeWeights();
-    net.printWeights();
-    readTrainingData(trainingDataFileName);
-    trainingData.pop_back();
+
+do{
     separateTrainingData();
-    do{
-      //train for an epoc
-      for(int number = 0; number < trainingData.size(); number++){
-        net.setInputs(inputTrainingData[number]);
-        net.setOutputs(outputTrainingData[number]);
-        //printTrainingData();
-        net.train();
-        cout<<number<<endl;
-      }
-      net.calculateMSE();
-      mseData.push_back(net.getMSE());
-      cout<<"DeltaMSE: "<<net.getDeltaMSE()<<endl;
-      shuffleData();
-    }while(net.getDeltaMSE() > CONVERGENCE_VALUE);
+    //train for an epoc
+    for(int number = 0; number < trainingData.size(); number++){
+    //  cout<<number<<endl;
+      net.setInputs(inputTrainingData[number]);
+      net.setOutputs(outputTrainingData[number]);
+      //printTrainingData();
+      //net.printWeights();
+      net.train();
+      //net.printWeights();
+
+      //cin >> run;
+    }
+    net.printOutputs();
+    net.calculateMSE();
+    mseData.push_back(net.getMSE());
+    cout<<"MSE: "<<net.getMSE()<<endl;
+    shuffleData();
+  }while(net.getMSE() > CONVERGENCE_VALUE);
   //  net.printWeights();
   //  net.printBias();
   //  net.printErrors();
@@ -136,9 +132,7 @@ int main(int argc, char **argv){
     cout<<"Would you like to run again"<<endl;
     cin>>run;
   }
-  cout<<"Would you like to train again?"<<endl;
-  cin>>train;
-}
+
   return(0);
 }
 

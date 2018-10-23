@@ -478,6 +478,7 @@ void Network::train(){
     //Calculate localField for the first layer
     for(int number = 0; number < this->getNeuronsInLayer(layer); number++){
       this->allNeurons[layer][number].calculateLocalField(inputVector);
+      //cout<<this->allNeurons[layer][number].getLocalField()<<endl;
     }
 
     //Calculate output of the first layer
