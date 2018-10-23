@@ -440,41 +440,6 @@ void Network::setDeltaMSE(double value){
 //End SETTERS
 
 //Start functional METHODS
-void Network::randomizeWeights(){
-  srand(time(NULL));
-  vector<double> randomWeights;
-
-  double value;
-  for(int layer = 0; layer < this->getNumberOfLayers(); layer++){
-    for(int number = 0; number < this->getNeuronsInLayer(layer); number++){
-      double value = (double)((double)(rand() % 2000) / 1000);
-      this->allNeurons[layer][number].setCurrentBias(value);
-      this->allNeurons[layer][number].setPreviousBias(value);
-      this->allNeurons[layer][number].setNextBias(value);
-
-
-      if(layer == 0){
-        for(int i = 0; i < this->numberOfInputs; i++){
-          value = (double)((double)(rand() % 2000) / 1000);
-          randomWeights.push_back(value);
-        }
-        this->allNeurons[layer][number].setCurrentWeights(randomWeights);
-        this->allNeurons[layer][number].setPreviousWeights(randomWeights);
-        this->allNeurons[layer][number].setNextWeights(randomWeights);
-        randomWeights.clear();
-      }else{
-        for(int i = 0; i < this->getNeuronsInLayer(layer-1); i++){
-          value = (double)((double)(rand() % 2000) / 1000);
-          randomWeights.push_back(value);
-        }
-        this->allNeurons[layer][number].setCurrentWeights(randomWeights);
-        this->allNeurons[layer][number].setPreviousWeights(randomWeights);
-        this->allNeurons[layer][number].setNextWeights(randomWeights);
-        randomWeights.clear();
-      }
-    }
-  }
-}
 
 void Network::train(){
   //Forward computation

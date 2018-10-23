@@ -1,5 +1,8 @@
 set title "MSE per EPOC With Convergence at 0.001"
 set title "MSE per EPOC With Convergence at 0.0001"
+set title "MSE per EPOC of FiveFold With N = 8, Alpha = 0.01, Beta = 0.3 and Convergence at 0.001,"
+set title "MSE per EPOC of FiveFold With N = 2, Alpha = 0.01, Beta = 0.3 and Convergence at 0.001,"
+set title "MSE per EPOC of FiveFold With N = 14, Alpha = 0.01, Beta = 0.3 and Convergence at 0.001,"
 set yrange [0:.3]
 set xlabel "EPOC"
 set ylabel "MSE"
@@ -22,3 +25,22 @@ plot  "mse_0001_3.dat" with lines lw 3 title columnheader(1)
 
 plot  "mse_001_4.dat" with lines lw 3 title columnheader(1)
 plot  "mse_0001_4.dat" with lines lw 3 title columnheader(1)
+
+
+plot "firstFiveFold_8_mse.dat" with lines lw 3 title columnheader(1), \
+     "secondFiveFold_8_mse.dat" with lines lw 3 title columnheader(1), \
+     "thirdFiveFold_8_mse.dat" with lines lw 3 title columnheader(1), \
+     "fourthFiveFold_8_mse.dat" with lines lw 3 title columnheader(1), \
+     "fifthFiveFold_8_mse.dat" with lines lw 3 title columnheader(1)
+
+plot "firstFiveFold_2_mse.dat" with lines lw 3 title columnheader(1), \
+     "secondFiveFold_2_mse.dat" with lines lw 3 title columnheader(1), \
+     "thirdFiveFold_2_mse.dat" with lines lw 3 title columnheader(1), \
+     "fourthFiveFold_2_mse.dat" with lines lw 3 title columnheader(1), \
+     "fifthFiveFold_2_mse.dat" with lines lw 3 title columnheader(1)
+
+plot "firstFiveFold_14_mse.dat" with lines lw 3 title columnheader(1), \
+     "secondFiveFold_14_mse.dat" with lines lw 3 title columnheader(1), \
+     "thirdFiveFold_14_mse.dat" with lines lw 3 title columnheader(1), \
+     "fourthFiveFold_14_mse.dat" with lines lw 3 title columnheader(1), \
+     "fifthFiveFold_14_mse.dat" with lines lw 3 title columnheader(1)

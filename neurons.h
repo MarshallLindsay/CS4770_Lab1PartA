@@ -177,7 +177,6 @@ public:
   void setDeltaMSE(double value);
 
   //Functional methods
-  void randomizeWeights();
   void train();
   void run(); //Same idea as train just with no backprop.
   void printWeights();

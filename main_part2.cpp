@@ -20,7 +20,7 @@ Project Name: Lab1PartA
 #define MOMENTUM_RATE 0.3
 #define CONVERGENCE_VALUE 0.001
 
-#define MSE_FILENAME "fifthFiveFold_8_mse.dat"
+#define MSE_FILENAME "fifthFiveFold_14_mse.dat"
 
 using namespace std;
 int inputs = 0;
