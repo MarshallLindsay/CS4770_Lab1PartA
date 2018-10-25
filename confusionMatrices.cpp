@@ -34,6 +34,7 @@ int main(int argc, char** argv){
   printMatrices(matrices);
   combineMatrices(matrices);
   printMatrices(combinedMatrices);
+  saveMatrices(fileNames);
 
   return(0);
 }
@@ -136,7 +137,7 @@ void printMatrices(vector<vector<vector<int>>> matrices){
 
 void saveMatrices(vector<string> fileNames){
   ofstream outputFile;
-  outputFile.open("matrices.txt");
+  outputFile.open("matrices.txt", ios::out);
   if(!outputFile.is_open()){
     cout<<"Could not open matrices.txt"<<endl;
     exit(1);
@@ -158,12 +159,29 @@ void saveMatrices(vector<string> fileNames){
       outputFile<<endl;
     }
     outputFile<<"\n\n\n\n\n";
-    if(i%4 == 0){
+    if(i == 4 || i == 9 || i == 14){
       //save the combined
+      outputFile<<setw(40)<<"Combined"<<endl;
+      outputFile<<endl;
+      outputFile<<setw(40)<<"Reference"<<endl;
+      outputFile<<setw(20)<<"1"<<setw(30)<<"2"<<endl;
+      outputFile<<endl;
+      for(int row = 0; row < combinedMatrices[i%4].size(); row++){
+        outputFile<<setw(8)<<"Prediction"<<setw(10)<<row +1;
+        for(int column = 0; column < combinedMatrices[i%4][row].size(); column++){
+          outputFile<<setw(10)<<combinedMatrices[i%4][row][column];
+          if(column != combinedMatrices[i%4][row].size() -1){
+            outputFile<<setw(10)<<"  |  ";
+          }
+        }
+        outputFile<<endl;
+      }
+        outputFile<<"\n\n\n\n\n";
     }
 
-    outputFile.close();
+
   }
+  outputFile.close();
 }
 
 void combineMatrices(vector<vector<vector<int>>> matrices){
@@ -176,6 +194,7 @@ void combineMatrices(vector<vector<vector<int>>> matrices){
   tempCombine.push_back(temp);
   tempCombine.push_back(temp);
   for(int i = 0; i < matrices.size(); i++){
+  //  cout<<i<<endl;
     for(int row = 0; row < matrices[i].size(); row++){
       for(int column = 0; column < matrices[i][row].size(); column++){
 
@@ -183,7 +202,8 @@ void combineMatrices(vector<vector<vector<int>>> matrices){
 
       }
     }
-    if(i% 4 == 0 && i != 0){
+    if(i == 4 || i == 9 || i == 14){
+    //  cout<<i<<endl;
       combinedMatrices.push_back(tempCombine);
       tempCombine.clear();
       temp.clear();

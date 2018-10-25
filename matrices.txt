@@ -1,0 +1,201 @@
+fiveFold_2_1.dat
+                               Reference
+                   1                             2
+
+Prediction         1        92       |           8
+Prediction         2         7       |          92
+
+
+
+
+
+fiveFold_2_2.dat
+                               Reference
+                   1                             2
+
+Prediction         1        96       |           4
+Prediction         2         3       |          96
+
+
+
+
+
+fiveFold_2_3.dat
+                               Reference
+                   1                             2
+
+Prediction         1        87       |           0
+Prediction         2        12       |         100
+
+
+
+
+
+fiveFold_2_4.dat
+                               Reference
+                   1                             2
+
+Prediction         1        90       |           4
+Prediction         2         9       |          96
+
+
+
+
+
+fiveFold_2_5.dat
+                               Reference
+                   1                             2
+
+Prediction         1        91       |           0
+Prediction         2         8       |         100
+
+
+
+
+
+                                Combined
+
+                               Reference
+                   1                             2
+
+Prediction         1       456       |          16
+Prediction         2        39       |         484
+
+
+
+
+
+fiveFold_8_1.dat
+                               Reference
+                   1                             2
+
+Prediction         1        93       |          10
+Prediction         2         6       |          90
+
+
+
+
+
+fiveFold_8_2.dat
+                               Reference
+                   1                             2
+
+Prediction         1        96       |           5
+Prediction         2         3       |          95
+
+
+
+
+
+fiveFold_8_3.dat
+                               Reference
+                   1                             2
+
+Prediction         1        87       |           0
+Prediction         2        12       |         100
+
+
+
+
+
+fiveFold_8_4.dat
+                               Reference
+                   1                             2
+
+Prediction         1        94       |           2
+Prediction         2         5       |          98
+
+
+
+
+
+fiveFold_8_5.dat
+                               Reference
+                   1                             2
+
+Prediction         1        91       |           0
+Prediction         2         8       |         100
+
+
+
+
+
+                                Combined
+
+                               Reference
+                   1                             2
+
+Prediction         1       461       |          17
+Prediction         2        34       |         483
+
+
+
+
+
+fiveFold_14_1.dat
+                               Reference
+                   1                             2
+
+Prediction         1        92       |           8
+Prediction         2         7       |          92
+
+
+
+
+
+fiveFold_14_2.dat
+                               Reference
+                   1                             2
+
+Prediction         1        95       |           5
+Prediction         2         4       |          95
+
+
+
+
+
+fiveFold_14_3.dat
+                               Reference
+                   1                             2
+
+Prediction         1        87       |           1
+Prediction         2        12       |          99
+
+
+
+
+
+fiveFold_14_4.dat
+                               Reference
+                   1                             2
+
+Prediction         1        92       |           3
+Prediction         2         7       |          97
+
+
+
+
+
+fiveFold_14_5.dat
+                               Reference
+                   1                             2
+
+Prediction         1        91       |           0
+Prediction         2         8       |         100
+
+
+
+
+
+                                Combined
+
+                               Reference
+                   1                             2
+
+Prediction         1       457       |          17
+Prediction         2        38       |         483
+
+
+
+
+

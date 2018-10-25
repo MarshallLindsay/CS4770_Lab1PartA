@@ -1,0 +1,1 @@
+./a.out fiveFold_2_1.dat fiveFold_2_2.dat fiveFold_2_3.dat fiveFold_2_4.dat fiveFold_2_5.dat fiveFold_8_1.dat fiveFold_8_2.dat fiveFold_8_3.dat fiveFold_8_4.dat fiveFold_8_5.dat fiveFold_14_1.dat fiveFold_14_2.dat fiveFold_14_3.dat fiveFold_14_4.dat fiveFold_14_5.dat
